@@ -38,7 +38,7 @@ static void _hash_free_cb(void *data);
  */
 EAPI Eina_Hash *etvdb_languages_get(const char *lang_file_path)
 {
-	char *uri;
+	char uri[URI_MAX];
 	Download xml;
 	Eina_File *file = NULL;
 	Eina_Hash *hash = NULL;
@@ -73,7 +73,6 @@ EAPI Eina_Hash *etvdb_languages_get(const char *lang_file_path)
 			return NULL;
 		xml.len = 0;
 
-		uri = malloc(URI_MAX);
 		snprintf(uri, URI_MAX, TVDB_API_URI"/%s/languages.xml", etvdb_api_key);
 		curl_easy_setopt(curl_handle, CURLOPT_URL, uri);
 		curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, _dl_to_mem_cb);
