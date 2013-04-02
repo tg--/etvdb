@@ -35,12 +35,16 @@ EAPI Eina_List *etvdb_series_get(const char *name)
 	if (!name)
 		return NULL;
 
-	if (!strncmp(name, "tt", 2))
+	if (!strncmp(name, "tt", 2)) {
+		DBG("Searching by IMDB ID: %s", name);
 		snprintf(uri, URI_MAX, TVDB_API_URI"/GetSeriesByRemoteID.php?imdbid=%s", name);
-	else if (!strncmp(name, "SH", 2))
+	} else if (!strncmp(name, "SH", 2)) {
+		DBG("Searching by zap2it ID: %s", name);
 		snprintf(uri, URI_MAX, TVDB_API_URI"/GetSeriesByRemoteID.php?zap2it=%s", name);
-	else
+	} else {
+		DBG("Searching by Name: %s", name);
 		snprintf(uri, URI_MAX, TVDB_API_URI"/GetSeries.php?seriesname=%s", name);
+	}
 
 	xml.data = malloc(1);
 	if (!xml.data)
