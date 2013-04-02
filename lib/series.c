@@ -17,8 +17,10 @@ static Eina_Bool _parse_series_cb(void *data, Eina_Simple_XML_Type type, const c
  * @brief Find Series by Name
  *
  * This function takes a name to search for.
+ * It can also search by IMDB ID (parameter starting with "tt"),
+ * or by zap2it ID (starting with "SH").
  *
- * @param name string to search for (name of the series).
+ * @param name string to search for (name or id of the series).
  *
  * @return a list containing all found series.
  *
@@ -26,18 +28,26 @@ static Eina_Bool _parse_series_cb(void *data, Eina_Simple_XML_Type type, const c
  */
 EAPI Eina_List *etvdb_series_get(const char *name)
 {
-	char search_uri[1024];
+	char uri[URI_MAX];
 	Download xml;
 	Eina_List *list = NULL;
 
-	snprintf(search_uri, sizeof(search_uri), TVDB_API_URI"/GetSeries.php?seriesname=%s", name);
+	if (!name)
+		return NULL;
+
+	if (!strncmp(name, "tt", 2))
+		snprintf(uri, URI_MAX, TVDB_API_URI"/GetSeriesByRemoteID.php?imdbid=%s", name);
+	else if (!strncmp(name, "SH", 2))
+		snprintf(uri, URI_MAX, TVDB_API_URI"/GetSeriesByRemoteID.php?zap2it=%s", name);
+	else
+		snprintf(uri, URI_MAX, TVDB_API_URI"/GetSeries.php?seriesname=%s", name);
 
 	xml.data = malloc(1);
 	if (!xml.data)
 		return NULL;
 	xml.len = 0;
 
-	curl_easy_setopt(curl_handle, CURLOPT_URL, search_uri);
+	curl_easy_setopt(curl_handle, CURLOPT_URL, uri);
 	curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, _dl_to_mem_cb);
 	curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&xml);
 	if (curl_easy_perform(curl_handle))
