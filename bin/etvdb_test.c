@@ -20,6 +20,10 @@ int main() {
 	printf("All Languages:\n");
 	eina_hash_foreach(languages, print_languages, NULL);
 
+	printf("\nSetting language to 'en'\n");
+	if (!etvdb_language_set(languages, "en"))
+		return 1;
+
 	printf("\nTry to find some languages:\n");
 	printf("\tLanguage for 'en': %s\n", (char *)eina_hash_find(languages, "en"));
 	printf("\tLanguage for 'sv': %s\n", (char *)eina_hash_find(languages, "sv"));

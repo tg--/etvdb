@@ -46,6 +46,9 @@ EAPI Eina_Bool etvdb_init(char *api_key)
 		return EINA_FALSE;
 	}
 
+	/* initialize default language */
+	strcpy(etvdb_language, "en");
+
 	if (!api_key) {
 		strcpy(etvdb_api_key, ETVDB_API_KEY);
 		INFO("Using ETVDBs own API key.");

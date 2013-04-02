@@ -98,7 +98,39 @@ EAPI Eina_Hash *etvdb_languages_get(const char *lang_file_path)
 	return hash;
 }
 
-/*
+/**
+ * @brief Change the global language setting
+ *
+ * This function sets the global language to a user setting.
+ * It is optional and there always is a default setting in place.
+ *
+ * @param hash hash table holding supported languages, as generated
+ * by @see etvdb_languages_get()
+ *
+ * @param lang 2 character language code, e.g. "en" or "fr" (required)
+ *
+ * @return EINA_TRUE on success, EINA_FALSE on failure
+ *
+ * @ingroup Infrastructure
+ */
+EAPI Eina_Bool etvdb_language_set(Eina_Hash *hash, char *lang)
+{
+	if (!lang || (strlen(lang) != 2)) {
+		ERR("Invalid languages. Falling back to default.");
+		return EINA_FALSE;
+	}
+
+	if (!eina_hash_find(hash, lang)) {
+		WARN("Language %s not found. Using default.", lang);
+		return EINA_FALSE;
+	}
+
+	strcpy(etvdb_language, lang);
+
+	return EINA_TRUE;
+}
+
+/**
  * @brief Function to retrieve time from TVDB's servers
  *
  * This function will retrieve the server time from TVDB which is useful
