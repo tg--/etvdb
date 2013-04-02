@@ -1,0 +1,11 @@
+HTML Entities
+=============
+
+This is a library to convert HTML entities to UTF-8.
+
+The files in this directory are taken from:
+https://bitbucket.org/cggaertner/cstuff/src/master
+
+It was written by Christoph Gaertner (thx!) and is
+licensed under the Boost Software License.
+See LICENSE for the license text.
