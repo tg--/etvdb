@@ -28,6 +28,7 @@ static Eina_Bool _parse_series_cb(void *data, Eina_Simple_XML_Type type, const c
  */
 EAPI Eina_List *etvdb_series_get(const char *name)
 {
+	char *buf;
 	char uri[URI_MAX];
 	Download xml;
 	Eina_List *list = NULL;
@@ -44,9 +45,11 @@ EAPI Eina_List *etvdb_series_get(const char *name)
 		snprintf(uri, URI_MAX, TVDB_API_URI"/GetSeriesByRemoteID.php?zap2it=%s&language=%s",
 				name, etvdb_language);
 	} else {
+		buf = curl_easy_escape(curl_handle, name, strlen(name));
 		DBG("Searching by Name: %s", name);
 		snprintf(uri, URI_MAX, TVDB_API_URI"/GetSeries.php?seriesname=%s&language=%s",
-				name, etvdb_language);
+				buf, etvdb_language);
+		free(buf);
 	}
 
 	xml.data = malloc(1);
