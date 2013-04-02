@@ -127,7 +127,7 @@ static Eina_Bool _parse_series_cb(void *data, Eina_Simple_XML_Type type, const c
 			series->name = NULL;
 			series->overview = NULL;
 			*list = eina_list_append(*list, series);
-		} else if (_xml_depth == 2 && !strncmp("id>", content, strlen("id>")))
+		} else if (_xml_depth == 2 && !strncmp("seriesid>", content, strlen("seriesid>")))
 			_xml_sibling = ID;
 		else if (_xml_depth == 2 && !strncmp("SeriesName>", content, strlen("SeriesName>")))
 			_xml_sibling = NAME;
