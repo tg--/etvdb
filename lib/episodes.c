@@ -121,20 +121,20 @@ static Eina_Bool _parse_episodes_cb(void *data, Eina_Simple_XML_Type type, const
 	} else if (type == EINA_SIMPLE_XML_DATA && _xml_depth == 2) {
 		episode = eina_list_nth(*list, _xml_count);
 		if (_xml_sibling == ID) {
-			episode->id = (void *)malloc(length + 1);
+			episode->id = malloc(length + 1);
 			snprintf(episode->id, length + 1, "%s", content);
 			DBG("Found ID: %s", episode->id);
 		} else if (_xml_sibling == NAME) {
-			episode->name = (void *)malloc(length + 1);
+			episode->name = malloc(length + 1);
 			snprintf(buf, length + 1, "%s", content);
 			HTML2UTF(episode->name, buf);
 			DBG("Found Name: %s", episode->name);
 		} else if (_xml_sibling == IMDB) {
-			episode->imdb_id = (void *)malloc(length + 1);
+			episode->imdb_id = malloc(length + 1);
 			snprintf(episode->imdb_id, length + 1, "%s", content);
 			DBG("Found IMDB_ID: %s", episode->imdb_id);
 		} else if (_xml_sibling == OVERVIEW) {
-			episode->overview = (void *)malloc(length + 1);
+			episode->overview = malloc(length + 1);
 			snprintf(buf, length + 1, "%s", content);
 			HTML2UTF(episode->overview, buf);
 			DBG("Found Overview: %zu chars", strlen(episode->overview));
