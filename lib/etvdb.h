@@ -65,7 +65,8 @@ extern "C" {
 /**
  * \brief This array holds the TVDB api key for ETVDB.
  * You should never manually overwrite it.
- * @see etvdb_init() */
+ * @see etvdb_init()
+ */
 char etvdb_api_key[17];
 
 /**
@@ -74,10 +75,15 @@ char etvdb_api_key[17];
  * via etvdb_language_set().
  * You should never manually overwrite it.
  * @see etvdb_language_set()
- * @see etvdb_init() */
+ * @see etvdb_init()
+ */
 char etvdb_language[3];
 
-/** this structure represents a TVDB Series */
+/**
+ * this structure represents a TVDB Series
+ *
+ * it is roughly comparable to TVDB's Base Series Record.
+ */
 typedef struct _etvdb_series {
 	char *id; /**< TVDB ID */
 	char *imdb_id; /**< IMDB Series ID */
@@ -86,17 +92,35 @@ typedef struct _etvdb_series {
 } Series;
 
 /**
+ * this structure represents a TVDB Episode
+ *
+ * it is roughly comparable to TVDB's Base Series Record.
+ */
+typedef struct _etvdb_episode {
+	char *id; /**< TVDB ID */
+	char *imdb_id; /**< IMDB Episode ID */
+	char *name; /**< Episode Name */
+	char *overview; /**< Episode Description */
+	int number; /**< Episode Number in Season */
+	int season; /**< Season Number in Series */
+} Episode;
+
+/**
  * @file
  * @brief This is the public etvdb API.
  */
-EAPI Eina_Bool etvdb_init(char api_key[17]);
-EAPI Eina_Bool etvdb_shutdown(void);
+EAPI Eina_Bool      etvdb_init(char api_key[17]);
+EAPI Eina_Bool      etvdb_shutdown(void);
 
 EAPI Eina_Hash     *etvdb_languages_get(const char *lang_file_path);
 EAPI Eina_Bool      etvdb_language_set(Eina_Hash *hash, char *lang);
 EAPI time_t         etvdb_server_time_get(void);
+
 EAPI Eina_List     *etvdb_series_get(const char *s);
 EAPI void           etvdb_series_free(Eina_List *list);
+
+EAPI Eina_List     *etvdb_episodes_get(const char *id);
+EAPI void           etvdb_episode_free(Episode *e);
 /**
  * @}
  */
