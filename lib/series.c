@@ -26,7 +26,7 @@ static Eina_Bool _parse_series_cb(void *data, Eina_Simple_XML_Type type, const c
  *
  * @ingroup Series
  */
-EAPI Eina_List *etvdb_series_get(const char *name)
+EAPI Eina_List *etvdb_series_find(const char *name)
 {
 	char *buf;
 	char uri[URI_MAX];

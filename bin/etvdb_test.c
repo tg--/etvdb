@@ -29,7 +29,7 @@ int main() {
 	printf("\tLanguage for 'en': %s\n", (char *)eina_hash_find(languages, "en"));
 	printf("\tLanguage for 'sv': %s\n", (char *)eina_hash_find(languages, "sv"));
 
-	series = etvdb_series_get("Super");
+	series = etvdb_series_find("Super");
 	printf("\nCounted %d Series, Searchstring: 'Super':\n", eina_list_count(series));
 
 	EINA_LIST_FOREACH(series, l, data)
