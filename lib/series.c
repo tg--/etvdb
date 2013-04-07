@@ -76,32 +76,21 @@ EAPI Eina_List *etvdb_series_find(const char *name)
 }
 
 /**
- * @brief Free a List filled with Series nodes
+ * @brief Free a Series structure
  *
- * This function frees a list filled exclusively with
- * Series nodes. It will free all node data and the list itself.
+ * This function frees a Series structure and its data.
  *
- * As not every item does contain all supported Series data,
- * it is necessary to check each 
- *
- * If, for some reason, you have other data in the list,
- * you'll have to free it yourself.
- *
- * @param list Eina_List filled only with Series nodes
+ * @param s pointer to Series structure
  *
  * @ingroup Series
  */
-EAPI void etvdb_series_free(Eina_List *list)
+EAPI void etvdb_series_free(Series *s)
 {
-	Series *data;
-
-	EINA_LIST_FREE(list, data) {
-		free(data->id);
-		free(data->imdb_id);
-		free(data->name);
-		free(data->overview);
-		free(data);
-	}
+	free(s->id);
+	free(s->imdb_id);
+	free(s->name);
+	free(s->overview);
+	free(s);
 }
 /**
  * @}

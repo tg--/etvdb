@@ -44,7 +44,9 @@ int main() {
 
 	/* free stuff */
 	eina_hash_free(languages);
-	etvdb_series_free(series);
+
+	EINA_LIST_FOREACH(series, l, data)
+		etvdb_series_free(data);
 
 	EINA_LIST_FOREACH(episodes, l, data2)
 		etvdb_episode_free(data2);
