@@ -132,21 +132,21 @@ static Eina_Bool _parse_series_cb(void *data, Eina_Simple_XML_Type type, const c
 	} else if (type == EINA_SIMPLE_XML_DATA && _xml_depth == 2) {
 		series = eina_list_nth(*list, _xml_count);
 		if (_xml_sibling == ID) {
-			series->id = (void *)malloc(sizeof(buf));
-			snprintf(series->id, sizeof(buf), "%s", content);
+			series->id = (void *)malloc(length + 1);
+			snprintf(series->id, length + 1, "%s", content);
 			DBG("Found ID: %s", series->id);
 		} else if (_xml_sibling == NAME) {
-			series->name = (void *)malloc(sizeof(buf));
-			snprintf(buf, sizeof(buf), "%s", content);
+			series->name = (void *)malloc(length + 1);
+			snprintf(buf, length + 1, "%s", content);
 			HTML2UTF(series->name, buf);
 			DBG("Found Name: %s", series->name);
 		} else if (_xml_sibling == IMDB) {
-			series->imdb_id = (void *)malloc(sizeof(buf));
-			snprintf(series->imdb_id, sizeof(buf), "%s", content);
+			series->imdb_id = (void *)malloc(length + 1);
+			snprintf(series->imdb_id, length + 1, "%s", content);
 			DBG("Found IMDB_ID: %s", series->imdb_id);
 		} else if (_xml_sibling == OVERVIEW) {
-			series->overview = (void *)malloc(sizeof(buf));
-			snprintf(buf, sizeof(buf), "%s", content);
+			series->overview = (void *)malloc(length + 1);
+			snprintf(buf, length + 1, "%s", content);
 			HTML2UTF(series->overview, buf);
 			DBG("Found Overview: %zu chars", strlen(series->overview));
 		}
