@@ -14,8 +14,7 @@ size_t _dl_to_mem_cb(char *ptr, size_t size, size_t nmemb, void *userdata)
 
 	memcpy(&(mem->data[mem->len]), ptr, size_total);
 	mem->len += size_total;
-	mem->data[size_total] = '\0';
+	mem->data[mem->len] = 0;
 
 	return size_total;
 }
-
