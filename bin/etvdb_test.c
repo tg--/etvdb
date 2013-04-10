@@ -15,7 +15,7 @@ int main() {
 	if (!etvdb_init(NULL))
 		return 1;
 
-	etvdb_server_time_get();
+	printf("Server Time: %zu\n\n", etvdb_server_time_get());
 
 	languages = etvdb_languages_get(NULL);
 
