@@ -38,10 +38,7 @@ EAPI Eina_List *etvdb_episodes_get(const char *id)
 	CURL_XML_DL_MEM(xml, uri)
 		ERR("Couldn't get series data from server.");
 
-	_xml_count = 0;
-	_xml_depth = 0;
-	_xml_sibling = 0;
-
+	_xml_count = _xml_depth = _xml_sibling = 0;
 	if (!eina_simple_xml_parse(xml.data, xml.len, EINA_TRUE, _parse_episodes_cb, &list))
 		CRIT("Parsing Episode data failed. If it happens again, please report a bug.");
 

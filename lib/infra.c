@@ -75,10 +75,7 @@ EAPI Eina_Hash *etvdb_languages_get(const char *lang_file_path)
 		}
 	}
 
-	_xml_count = 0;
-	_xml_depth = 0;
-	_xml_sibling = 0;
-
+	_xml_count = _xml_depth = _xml_sibling = 0;
 	if (!eina_simple_xml_parse(xml.data, xml.len, EINA_TRUE, _parse_lang_cb, hash))
 		CRIT("Parsing of languages.xml failed. Probably invalid XML file.");
 
@@ -145,7 +142,7 @@ EAPI time_t etvdb_server_time_get(void)
 		goto end;
 	}
 
-	_xml_depth = 0;
+	_xml_count = _xml_depth = _xml_sibling = 0;
 	eina_simple_xml_parse(xml.data, xml.len, EINA_TRUE, _parse_time_cb, (void *)&server_time);
 	DBG("Server Time: %ld", server_time);
 
