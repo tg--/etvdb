@@ -15,6 +15,13 @@
 
 #define HTML2UTF(x, y) decode_html_entities_utf8(x, y)
 
+/* this copies a non-nul-terminated buffer and terminates It
+ * len is the size of src, dst has to be len+1 */
+#define MEM2STR(dst, src, slen) \
+	memcpy(dst, src, slen); \
+	dst[slen] = '\0';
+
+
 #define ETVDB_API_KEY "A34C5A0CAF0F3EFD"
 #define TVDB_API_URI "http://thetvdb.com/api"
 

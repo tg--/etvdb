@@ -199,11 +199,11 @@ static Eina_Bool _parse_lang_cb(void *data, Eina_Simple_XML_Type type, const cha
 	}
 	else if (type == EINA_SIMPLE_XML_DATA && _xml_depth == 2) {
 		eina_convert_itoa(_xml_count, itoa);
-		snprintf(buf, sizeof(buf), "%s", content);
+		MEM2STR(buf, content, length);
 
 		if (_xml_sibling == NAME) {
 			DBG("Found Name: %s", buf);
-			snprintf(key, sizeof(key), "%s", (char *)eina_hash_find(data, itoa));
+			MEM2STR(key, (char *)eina_hash_find(data, itoa), 2);
 
 			/* if the entry of the hash is empty, add data to it;
 			 * else take the data and use it as 2-char hash */
@@ -246,7 +246,7 @@ static Eina_Bool _parse_time_cb(void *data, Eina_Simple_XML_Type type, const cha
 			_xml_depth++;
 	}
 	else if (type == EINA_SIMPLE_XML_DATA && _xml_depth == 2) {
-		snprintf(buf, sizeof(buf), "%s", content);
+		MEM2STR(buf, content, length);
 		*((int*)data) = strtol(buf, NULL, 10);
 	}
 

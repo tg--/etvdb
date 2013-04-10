@@ -122,28 +122,28 @@ static Eina_Bool _parse_episodes_cb(void *data, Eina_Simple_XML_Type type, const
 		episode = eina_list_nth(*list, _xml_count);
 		if (_xml_sibling == ID) {
 			episode->id = malloc(length + 1);
-			snprintf(episode->id, length + 1, "%s", content);
+			MEM2STR(episode->id, content, length);
 			DBG("Found ID: %s", episode->id);
 		} else if (_xml_sibling == NAME) {
 			episode->name = malloc(length + 1);
-			snprintf(buf, length + 1, "%s", content);
+			MEM2STR(buf, content, length);
 			HTML2UTF(episode->name, buf);
 			DBG("Found Name: %s", episode->name);
 		} else if (_xml_sibling == IMDB) {
 			episode->imdb_id = malloc(length + 1);
-			snprintf(episode->imdb_id, length + 1, "%s", content);
+			MEM2STR(episode->imdb_id, content, length);
 			DBG("Found IMDB_ID: %s", episode->imdb_id);
 		} else if (_xml_sibling == OVERVIEW) {
 			episode->overview = malloc(length + 1);
-			snprintf(buf, length + 1, "%s", content);
+			MEM2STR(buf, content, length);
 			HTML2UTF(episode->overview, buf);
 			DBG("Found Overview: %zu chars", strlen(episode->overview));
 		} else if (_xml_sibling == NUMBER) {
-			snprintf(buf, length + 1, "%s", content);
+			MEM2STR(buf, content, length);
 			episode->number = atoi(buf);
 			DBG("Found Episode Number: %d", episode->number);
 		} else if (_xml_sibling == SEASON) {
-			snprintf(buf, length + 1, "%s", content);
+			MEM2STR(buf, content, length);
 			episode->season = atoi(buf);
 			DBG("Found Season Number: %d", episode->season);
 		}
