@@ -105,56 +105,76 @@ static Eina_Bool _parse_series_cb(void *data, Eina_Simple_XML_Type type, const c
 	Series *series;
 	Eina_List **list = data;
 
-	if (type == EINA_SIMPLE_XML_OPEN) {
-		if (_xml_depth == 0 && !strncmp("Data>", content, strlen("Data>")))
-			_xml_depth++;
-		else if (_xml_depth == 1 && !strncmp("Series>", content, strlen("Series>"))) {
-			_xml_depth++;
-			series = malloc(sizeof(Series));
-			series->id = NULL;
-			series->imdb_id = NULL;
-			series->name = NULL;
-			series->overview = NULL;
-			*list = eina_list_append(*list, series);
-		} else if (_xml_depth == 2 && !strncmp("seriesid>", content, strlen("seriesid>")))
-			_xml_sibling = ID;
-		else if (_xml_depth == 2 && !strncmp("SeriesName>", content, strlen("SeriesName>")))
-			_xml_sibling = NAME;
-		else if (_xml_depth == 2 && !strncmp("IMDB_ID>", content, strlen("IMDB_ID>")))
-			_xml_sibling = IMDB;
-		else if (_xml_depth == 2 && !strncmp("Overview>", content, strlen("Overview>")))
-			_xml_sibling = OVERVIEW;
-		else
-			_xml_sibling = UNKNOWN;
-	} else if (type == EINA_SIMPLE_XML_CLOSE && !strncmp("Series>", content, strlen("Series>"))) {
-		_xml_count++;
-		_xml_depth--;
-	} else if (type == EINA_SIMPLE_XML_DATA && _xml_depth == 2) {
-		series = eina_list_nth(*list, _xml_count);
-		switch(_xml_sibling) {
-		case ID:
-			series->id = malloc(length + 1);
-			MEM2STR(series->id, content, length);
-			DBG("Found ID: %s", series->id);
+	switch (type) {
+	case EINA_SIMPLE_XML_OPEN:
+		switch (_xml_depth) {
+		case 0:
+			if (!strncmp("Data>", content, strlen("Data>")))
+				_xml_depth++;
 			break;
-		case NAME:
-			series->name = malloc(length + 1);
-			MEM2STR(buf, content, length);
-			HTML2UTF(series->name, buf);
-			DBG("Found Name: %s", series->name);
+		case 1:
+			if (!strncmp("Series>", content, strlen("Series>"))) {
+				_xml_depth++;
+				series = malloc(sizeof(Series));
+				series->id = NULL;
+				series->imdb_id = NULL;
+				series->name = NULL;
+				series->overview = NULL;
+				series->seasons = NULL;
+				series->specials = NULL;
+				*list = eina_list_append(*list, series);
+			}
 			break;
-		case IMDB:
-			series->imdb_id = malloc(length + 1);
-			MEM2STR(series->imdb_id, content, length);
-			DBG("Found IMDB_ID: %s", series->imdb_id);
-			break;
-		case OVERVIEW:
-			series->overview = malloc(length + 1);
-			MEM2STR(buf, content, length);
-			HTML2UTF(series->overview, buf);
-			DBG("Found Overview: %zu chars", strlen(series->overview));
+		case 2:
+			if (!strncmp("seriesid>", content, strlen("seriesid>")))
+				_xml_sibling = ID;
+			else if (!strncmp("SeriesName>", content, strlen("SeriesName>")))
+				_xml_sibling = NAME;
+			else if (!strncmp("IMDB_ID>", content, strlen("IMDB_ID>")))
+				_xml_sibling = IMDB;
+			else if (!strncmp("Overview>", content, strlen("Overview>")))
+				_xml_sibling = OVERVIEW;
+			else
+				_xml_sibling = UNKNOWN;
 			break;
 		}
+		break;
+	case EINA_SIMPLE_XML_CLOSE:
+		if(!strncmp("Series>", content, strlen("Series>"))) {
+			_xml_count++;
+			_xml_depth--;
+		}
+		break;
+	case EINA_SIMPLE_XML_DATA:
+		if (_xml_depth == 2) {
+			series = eina_list_nth(*list, _xml_count);
+
+			switch (_xml_sibling) {
+			case ID:
+				series->id = malloc(length + 1);
+				MEM2STR(series->id, content, length);
+				DBG("Found ID: %s", series->id);
+				break;
+			case NAME:
+				series->name = malloc(length + 1);
+				MEM2STR(buf, content, length);
+				HTML2UTF(series->name, buf);
+				DBG("Found Name: %s", series->name);
+				break;
+			case IMDB:
+				series->imdb_id = malloc(length + 1);
+				MEM2STR(series->imdb_id, content, length);
+				DBG("Found IMDB_ID: %s", series->imdb_id);
+				break;
+			case OVERVIEW:
+				series->overview = malloc(length + 1);
+				MEM2STR(buf, content, length);
+				HTML2UTF(series->overview, buf);
+				DBG("Found Overview: %zu chars", strlen(series->overview));
+				break;
+			}
+		}
+		break;
 	}
 
 	return EINA_TRUE;

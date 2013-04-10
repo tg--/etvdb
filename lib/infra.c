@@ -179,57 +179,73 @@ static Eina_Bool _parse_lang_cb(void *data, Eina_Simple_XML_Type type, const cha
 	char key[3];
 	enum nname { UNKNOWN, NAME, ABBR };
 
-	if (type == EINA_SIMPLE_XML_OPEN) {
-		if (_xml_depth == 0 && !strncmp("Languages>", content, strlen("Languages>")))
-			_xml_depth++;
-		else if (_xml_depth == 1 && !strncmp("Language>", content, strlen("Language>"))) {
-			_xml_depth++;
-			eina_convert_itoa(_xml_count, itoa);
-			eina_hash_add(data, itoa, "");
-		} else if (_xml_depth == 2 && !strncmp("name>", content, strlen("name>")))
-			_xml_sibling = NAME;
-		else if (_xml_depth == 2 && !strncmp("abbreviation>", content, strlen("abbreviation>")))
-			_xml_sibling = ABBR;
-		else
-			_xml_sibling = UNKNOWN;
-	}
-	else if (type == EINA_SIMPLE_XML_CLOSE && !strncmp("Language>", content, strlen("Language>"))) {
-		_xml_count++;
-		_xml_depth--;
-	}
-	else if (type == EINA_SIMPLE_XML_DATA && _xml_depth == 2) {
-		eina_convert_itoa(_xml_count, itoa);
-		MEM2STR(buf, content, length);
-
-		if (_xml_sibling == NAME) {
-			DBG("Found Name: %s", buf);
-			MEM2STR(key, (char *)eina_hash_find(data, itoa), 2);
-
-			/* if the entry of the hash is empty, add data to it;
-			 * else take the data and use it as 2-char hash */
-			if (key[0] == '\0')
-				eina_hash_set(data, itoa, strdup(buf));
-			else {
-				eina_hash_move(data, itoa, key);
-				free(eina_hash_modify(data, key, strdup(buf))); 
+	switch (type) {
+	case EINA_SIMPLE_XML_OPEN:
+		switch (_xml_depth) {
+		case 0:
+			if (!strncmp("Languages>", content, strlen("Languages>")))
+				_xml_depth++;
+			break;
+		case 1:
+			if (!strncmp("Language>", content, strlen("Language>"))) {
+				_xml_depth++;
+				eina_convert_itoa(_xml_count, itoa);
+				eina_hash_add(data, itoa, "");
 			}
-		} else if (_xml_sibling == ABBR) {
-			DBG("Found Abbreviation: %s", buf);
-
-			/* if the hash is found an contains an empty string, add key as data;
-			 * if found, but not empty, rename the key 
-			 * otherwise the xml is invalid */
-			void *p = (char *)eina_hash_find(data, itoa);
-			if (p)
-				if (strncmp(p, "", 1) == 0)
-					eina_hash_set(data, itoa, strdup(buf));
-				else
-					eina_hash_move(data, itoa, buf);
+			break;
+		case 2:
+			if (!strncmp("name>", content, strlen("name>")))
+				_xml_sibling = NAME;
+			else if (!strncmp("abbreviation>", content, strlen("abbreviation>")))
+				_xml_sibling = ABBR;
 			else
-				return EINA_FALSE;
+				_xml_sibling = UNKNOWN;
+			break;
 		}
-	}
+		break;
+	case EINA_SIMPLE_XML_CLOSE:
+		if (!strncmp("Language>", content, strlen("Language>"))) {
+			_xml_count++;
+			_xml_depth--;
+		}
+		break;
+	case EINA_SIMPLE_XML_DATA:
+		if (_xml_depth == 2) {
+			eina_convert_itoa(_xml_count, itoa);
+			MEM2STR(buf, content, length);
 
+			switch (_xml_sibling) {
+			case NAME:
+				DBG("Found Name: %s", buf);
+				MEM2STR(key, (char *)eina_hash_find(data, itoa), 2);
+
+				/* if the entry of the hash is empty, add data to it;
+				 * else take the data and use it as 2-char hash */
+				if (key[0] == '\0')
+					eina_hash_set(data, itoa, strdup(buf));
+				else {
+					eina_hash_move(data, itoa, key);
+					free(eina_hash_modify(data, key, strdup(buf)));
+				}
+				break;
+			case ABBR:
+				DBG("Found Abbreviation: %s", buf);
+
+				/* if the hash is found an contains an empty string, add key as data;
+				 * if found, but not empty, rename the key
+				 * otherwise the xml is invalid */
+				void *p = (char *)eina_hash_find(data, itoa);
+				if (p)
+					if (strncmp(p, "", 1) == 0)
+						eina_hash_set(data, itoa, strdup(buf));
+					else
+						eina_hash_move(data, itoa, buf);
+				else
+					return EINA_FALSE;
+				break;
+			}
+		}
+	} /* switch (type) */
 	return EINA_TRUE;
 }
 
@@ -239,15 +255,19 @@ static Eina_Bool _parse_time_cb(void *data, Eina_Simple_XML_Type type, const cha
 {
 	char buf[length + 1];
 
-	if (type == EINA_SIMPLE_XML_OPEN) {
+	switch (type) {
+	case EINA_SIMPLE_XML_OPEN:
 		if (_xml_depth == 0 && !strncmp("Items>", content, strlen("Items>")))
 			_xml_depth++;
 		else if (_xml_depth == 1 && !strncmp("Time>", content, strlen("Time>")))
 			_xml_depth++;
-	}
-	else if (type == EINA_SIMPLE_XML_DATA && _xml_depth == 2) {
-		MEM2STR(buf, content, length);
-		*((int*)data) = strtol(buf, NULL, 10);
+		break;
+	case EINA_SIMPLE_XML_DATA:
+		if (_xml_depth == 2) {
+			MEM2STR(buf, content, length);
+			*((int*)data) = strtol(buf, NULL, 10);
+		}
+		break;
 	}
 
 	return EINA_TRUE;
