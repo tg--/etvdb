@@ -76,6 +76,69 @@ EAPI Eina_List *etvdb_series_find(const char *name)
 }
 
 /**
+ * @brief Populate a Series structure with Episode data
+ *
+ * This function populates a Series structure with all available and
+ * supported Episode data.
+ *
+ * The Series has to be initialized and at least contain an ID.
+ *
+ * As this can be a fairly large amount of data (up to serveral
+ * ten thousand lines XML), this function can be slow (largely limited
+ * by the TVDB download speed).
+ * Only use it when more than a few specific episode records are required.
+ *
+ * @param s pointer to Series structure.
+ *
+ * @return EINA_TRUE on success, EINA_FALSE on failure.
+ *
+ * @ingroup Series
+ *
+ * @see etvdb_series_find()
+ * @see etvdb_series_free()
+ */
+EAPI Eina_Bool etvdb_series_populate(Series *s)
+{
+	Eina_List *all, *l, *lnex, *sl;
+	Episode *e;
+
+	if (!s->id) {
+		ERR("No ID for the selected Series found.");
+		return EINA_FALSE;
+	}
+
+	all = etvdb_episodes_get(s->id);
+	if (!all) {
+		ERR("Couldn't get Episodes for Series %s", s->id);
+		return EINA_FALSE;
+	}
+
+	EINA_LIST_FOREACH_SAFE(all, l, lnex, e) {
+		/* specials are season 0 */
+		if (e->season == 0)
+			eina_list_move(&s->specials, &all, e);
+		else if (eina_list_count(s->seasons) < e->season) {
+			sl = NULL;
+			eina_list_move(&sl, &all, e);
+			s->seasons =  eina_list_append(s->seasons, sl);
+		} else {
+			sl = (Eina_List *)eina_list_nth(s->seasons, e->season - 1);
+			eina_list_move(&sl, &all, e);
+		}
+	}
+
+	if (eina_list_count(all) != 0) {
+		ERR("Not all episodes could be added to the Season structure.");
+		return EINA_FALSE;
+	}
+
+	EINA_LIST_FREE(all, e)
+		etvdb_episode_free(e);
+
+	return EINA_TRUE;
+}
+
+/**
  * @brief Free a Series structure
  *
  * This function frees a Series structure and its data.
@@ -86,6 +149,17 @@ EAPI Eina_List *etvdb_series_find(const char *name)
  */
 EAPI void etvdb_series_free(Series *s)
 {
+	Eina_List *sl;
+	Episode *e;
+
+	EINA_LIST_FREE(s->seasons, sl) {
+		EINA_LIST_FREE(sl, e)
+			etvdb_episode_free(e);
+	}
+
+	EINA_LIST_FREE(s->specials, e)
+		etvdb_episode_free(e);
+
 	free(s->id);
 	free(s->imdb_id);
 	free(s->name);

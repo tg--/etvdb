@@ -38,9 +38,12 @@
  *
  *  To get started, check out the following sections:
  *  @li @ref Setup
- *  @li @ref TVDB functions
+ *  @li @ref Infrastructure
+ *  @li @ref Episodes
+ *  @li @ref Series
  */
 
+#include <stdlib.h>
 #include <string.h>
 #include <Eina.h>
 
@@ -89,6 +92,8 @@ typedef struct _etvdb_series {
 	char *imdb_id; /**< IMDB Series ID */
 	char *name; /**< Series Name */
 	char *overview; /**< Series Description */
+	Eina_List *seasons; /**< List containing 1 list per season */
+	Eina_List *specials; /**< List containing special episodes */
 } Series;
 
 /**
@@ -118,6 +123,7 @@ EAPI time_t         etvdb_server_time_get(void);
 
 EAPI Eina_List     *etvdb_series_find(const char *name);
 EAPI void           etvdb_series_free(Series *s);
+EAPI Eina_Bool      etvdb_series_populate(Series *s);
 
 EAPI Eina_List     *etvdb_episodes_get(const char *id);
 EAPI void           etvdb_episode_free(Episode *e);
