@@ -155,13 +155,15 @@ EAPI time_t etvdb_server_time_get(void)
 	curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&xml);
 	if (curl_easy_perform(curl_handle)) {
 		ERR("Couldn't get time from server.");
-		return 0;
+		server_time = 0;
+		goto end;
 	}
 
 	_xml_depth = 0;
 	eina_simple_xml_parse(xml.data, xml.len, EINA_TRUE, _parse_time_cb, (void *)&server_time);
 	DBG("Server Time: %ld", server_time);
 
+end:
 	free(xml.data);
 
 	return server_time;
