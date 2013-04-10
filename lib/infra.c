@@ -245,6 +245,8 @@ static Eina_Bool _parse_lang_cb(void *data, Eina_Simple_XML_Type type, const cha
 				break;
 			}
 		}
+	default:
+		break;
 	} /* switch (type) */
 	return EINA_TRUE;
 }
@@ -267,6 +269,8 @@ static Eina_Bool _parse_time_cb(void *data, Eina_Simple_XML_Type type, const cha
 			MEM2STR(buf, content, length);
 			*((int*)data) = strtol(buf, NULL, 10);
 		}
+		break;
+	default:
 		break;
 	}
 

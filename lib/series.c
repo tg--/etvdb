@@ -175,6 +175,8 @@ static Eina_Bool _parse_series_cb(void *data, Eina_Simple_XML_Type type, const c
 			}
 		}
 		break;
+	default:
+		break;
 	}
 
 	return EINA_TRUE;
