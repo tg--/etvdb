@@ -68,16 +68,8 @@ EAPI Eina_Hash *etvdb_languages_get(const char *lang_file_path)
 		DBG("Read %s file with size %d", eina_file_filename_get(file), (int)xml.len);
 	}
 	else {
-		xml.data = malloc(1);
-		if (!xml.data)
-			return NULL;
-		xml.len = 0;
-
 		snprintf(uri, URI_MAX, TVDB_API_URI"/%s/languages.xml", etvdb_api_key);
-		curl_easy_setopt(curl_handle, CURLOPT_URL, uri);
-		curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, _dl_to_mem_cb);
-		curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&xml);
-		if (curl_easy_perform(curl_handle)) {
+		CURL_XML_DL_MEM(xml, uri) {
 			ERR("Couldn't get languages from server.");
 			return NULL;
 		}
@@ -147,13 +139,7 @@ EAPI time_t etvdb_server_time_get(void)
 	time_t server_time = 0;
 	Download xml;
 
-	xml.data = malloc(1);
-	xml.len = 0;
-
-	curl_easy_setopt(curl_handle, CURLOPT_URL, TVDB_API_URI"/Updates.php?type=none");
-	curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, _dl_to_mem_cb);
-	curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&xml);
-	if (curl_easy_perform(curl_handle)) {
+	CURL_XML_DL_MEM(xml, TVDB_API_URI"/Updates.php?type=none") {
 		ERR("Couldn't get time from server.");
 		server_time = 0;
 		goto end;

@@ -21,6 +21,17 @@
 	memcpy(dst, src, slen); \
 	dst[slen] = '\0';
 
+/* convenience macro to download a xml to memory
+ * use very carefully! dl.data has to bee free()d!
+ * the block following will be executed when the download fails. */
+#define CURL_XML_DL_MEM(dl, uri) \
+	dl.data = malloc(1); \
+	dl.len = 0; \
+	curl_easy_setopt(curl_handle, CURLOPT_URL, uri); \
+	curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, _dl_to_mem_cb); \
+	curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&dl); \
+	if (curl_easy_perform(curl_handle))
+
 
 #define ETVDB_API_KEY "A34C5A0CAF0F3EFD"
 #define TVDB_API_URI "http://thetvdb.com/api"
