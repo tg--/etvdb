@@ -30,8 +30,8 @@ int main() {
 	printf("\tLanguage for 'en': %s\n", (char *)eina_hash_find(languages, "en"));
 	printf("\tLanguage for 'sv': %s\n\n", (char *)eina_hash_find(languages, "sv"));
 
-	series = etvdb_series_find("The Simpsons");
-	printf("Counted %d Series, Searchstring: 'The Simpsons':\n", eina_list_count(series));
+	series = etvdb_series_find("Lucky Louie");
+	printf("Counted %d Series, Searchstring: 'Lucky Louie':\n", eina_list_count(series));
 
 	EINA_LIST_FOREACH(series, l, ser_data)
 		printf("\tSeries ID: %s, Serienname: %s\n", ser_data->id, ser_data->name);
@@ -55,6 +55,11 @@ int main() {
 		i++;
 		printf("\tEpisodes in Season %d: %d\n", i, eina_list_count(sl));
 	}
+	printf("\n");
+
+	epi_data = etvdb_episode_by_number_get(ser_data->id, 1, 1);
+	printf("Get Episode By Number:\n\tFound Episode ID: %s\n\n", epi_data->id);
+	etvdb_episode_free(epi_data);
 
 	/* free stuff */
 	eina_hash_free(languages);
