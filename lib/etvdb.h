@@ -126,6 +126,7 @@ EAPI void           etvdb_series_free(Series *s);
 EAPI Eina_Bool      etvdb_series_populate(Series *s);
 
 EAPI Eina_List     *etvdb_episodes_get(const char *id);
+EAPI Episode       *etvdb_episode_by_id_get(const char *id);
 EAPI Episode       *etvdb_episode_by_number_get(const char *id, int season, int episode);
 EAPI void           etvdb_episode_free(Episode *e);
 /**

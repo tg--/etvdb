@@ -51,6 +51,45 @@ EAPI Eina_List *etvdb_episodes_get(const char *id)
  * @brief Get episode data for one specific Episode
  *
  * This function will retreive the data for one episode,
+ * according to its episode ID.
+ *
+ * @param id TVDB ID of a episode
+ *
+ * @return a Episode structure on success,
+ * NULL on failure.
+ *
+ * @ingroup Episodes
+ */
+EAPI Episode *etvdb_episode_by_id_get(const char *id)
+{
+	char uri[URI_MAX];
+	Download xml;
+	Eina_List *list = NULL;
+	Episode *e = NULL;
+
+	snprintf(uri, URI_MAX, TVDB_API_URI"/%s/episodes/%s/%s.xml", etvdb_api_key, id, etvdb_language);
+
+	CURL_XML_DL_MEM(xml, uri)
+		ERR("Couldn't get episode data from server.");
+
+	_xml_count = _xml_depth = _xml_sibling = 0;
+	if (!eina_simple_xml_parse(xml.data, xml.len, EINA_TRUE, _parse_episodes_cb, &list))
+		CRIT("Parsing Episode data failed. If it happens again, please report a bug.");
+
+	free(xml.data);
+
+	/* we assume that only a single episode is in the list
+	 * should it be more (which would be a TVDB bug), its a memleak */
+	e = eina_list_data_get(list);
+	list = eina_list_remove_list(list, list);
+
+	return e;
+}
+
+/**
+ * @brief Get episode data for one specific Episode
+ *
+ * This function will retreive the data for one episode,
  * according to its season and episode number.
  *
  * @param id TVDB ID of a season
