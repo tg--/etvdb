@@ -145,6 +145,27 @@ EAPI void etvdb_episode_free(Episode *e)
 	free(e->overview);
 	free(e);
 }
+
+/**
+ * @brief Get Episode data from Series data
+ *
+ * This function will return a pointer to Episode data inside a
+ * initialized Series struct.
+ * It can also get special episode by passing 0 as season number.
+ *
+ * @param s Series data
+ * @param season season number, 0 for specials
+ * @param episode episode number
+ *
+ * @return NULL on failure, pointer to episode structure on success
+ */
+EAPI Episode *etvdb_episode_from_series_get(Series *s, int season, int episode)
+{
+	if (season == 0)
+		return eina_list_nth(s->specials, episode - 1);
+	else
+		return eina_list_nth(eina_list_nth(s->seasons, season - 1), episode - 1);
+}
 /**
  * @}
  */
