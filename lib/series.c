@@ -155,6 +155,25 @@ EAPI void etvdb_series_free(Series *s)
 	free(s->overview);
 	free(s);
 }
+
+/**
+ * @brief Count episodes of one season in a Series structure
+ *
+ * This functions counts the number of episodes of one season
+ * in a Series structure.
+ *
+ * @param s pointer to Series static
+ * @param season number of the season
+ *
+ * @return 0 on error or empty structure, number of seasons >=1 on success
+ *
+ * @ingroup Series
+ */
+EAPI int etvdb_series_episodes_count(Series *s, int season)
+{
+	return eina_list_count(eina_list_nth(s->seasons, season - 1));
+}
+
 /**
  * @}
  */

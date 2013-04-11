@@ -61,6 +61,8 @@ int main() {
 	printf("Get Episode By Number:\n\tFound Episode ID: %s\n\n", epi_data->id);
 	etvdb_episode_free(epi_data);
 
+	printf("Get number of Episodes in Season 1: %d\n\n", etvdb_series_episodes_count(ser_data, 1));
+
 	/* free stuff */
 	eina_hash_free(languages);
 

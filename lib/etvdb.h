@@ -121,6 +121,7 @@ EAPI Eina_Hash     *etvdb_languages_get(const char *lang_file_path);
 EAPI Eina_Bool      etvdb_language_set(Eina_Hash *hash, char *lang);
 EAPI time_t         etvdb_server_time_get(void);
 
+EAPI int            etvdb_series_episodes_count(Series *s, int season);
 EAPI Eina_List     *etvdb_series_find(const char *name);
 EAPI void           etvdb_series_free(Series *s);
 EAPI Eina_Bool      etvdb_series_populate(Series *s);
