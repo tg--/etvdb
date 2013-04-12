@@ -15,8 +15,10 @@ endif(DEBUG)
 INCLUDE(FindPkgConfig)
 pkg_check_modules(CURL REQUIRED libcurl)
 pkg_check_modules(EINA REQUIRED eina)
+pkg_check_modules(ECORE REQUIRED ecore)
+pkg_check_modules(ECORE-CON REQUIRED ecore-con)
 
-include_directories(${EINA_INCLUDE_DIRS})
+include_directories(${EINA_INCLUDE_DIRS} ${ECORE_INCLUDE_DIRS} ${ECORE-CON_INCLUDE_DIRS})
 
 add_subdirectory(external)
 add_subdirectory(lib)
