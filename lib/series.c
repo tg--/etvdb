@@ -14,6 +14,48 @@ static Eina_Bool _parse_series_cb(void *data, Eina_Simple_XML_Type type, const c
  */
 
 /**
+ * @brief Get Series data by TVDB Series ID
+ *
+ * This function will retreive the data for one series,
+ * identified by its TVDB ID.
+ * This is a TVDB Base Series Record, if you need all the
+ * episodes, you additionally should @see etvdb_series_populate.
+ *
+ * @param id TVDB ID of a series
+ *
+ * @return a Series structure on success,
+ * NULL on failure.
+ *
+ * @ingroup Series
+ */
+EAPI Series *etvdb_series_by_id_get(const char *id)
+{
+	char uri[URI_MAX];
+	Download xml;
+	Eina_List *list = NULL;
+	Series *s = NULL;
+
+	snprintf(uri, URI_MAX, TVDB_API_URI"/%s/series/%s/%s.xml",
+			etvdb_api_key, id, etvdb_language);
+
+	CURL_XML_DL_MEM(xml, uri)
+		ERR("Couldn't get series data from server.");
+
+	_xml_count = _xml_depth = _xml_sibling = 0;
+	if (!eina_simple_xml_parse(xml.data, xml.len, EINA_TRUE, _parse_series_cb, &list))
+		CRIT("Parsing series data failed. If it happens again, please report a bug.");
+
+	free(xml.data);
+
+	/* we assume that only a single episode is in the list
+	 * should it be more (which would be a TVDB bug), its a memleak */
+	s = eina_list_data_get(list);
+	list = eina_list_remove_list(list, list);
+
+	return s;
+}
+
+/**
  * @brief Find Series by Name
  *
  * This function takes a name to search for.
