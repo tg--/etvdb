@@ -32,9 +32,15 @@ cmake .. && make && make install
 for a debugging build pass this to cmake:
 -D DEBUG=ON
 
-The dependencies are Eina and libcurl, nothing else.
+The dependencies are Eina, Ecore and libcurl.
 
 4) License
 ----------
-ETVDB is available under the LGPLv2.1 or any later version.
-See COPYING for details.
+libetvdb is available under the LGPLv2.1 or any later version.
+
+See COPYING-LGPL-2.1 for details.
+
+
+etvdb_cli is available under the GPLv3 or any later version.
+
+See COPYING-GPL-3 for details.
