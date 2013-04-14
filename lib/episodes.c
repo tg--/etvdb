@@ -92,7 +92,7 @@ EAPI Episode *etvdb_episode_by_id_get(const char *id)
  * This function will retreive the data for one episode,
  * according to its season and episode number.
  *
- * @param id TVDB ID of a season
+ * @param id TVDB ID of a series
  * @param season season number of the episode
  * @param episode episode number in the season
  *
