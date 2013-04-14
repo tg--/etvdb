@@ -105,7 +105,7 @@ EAPI Eina_Hash *etvdb_languages_get(const char *lang_file_path)
 EAPI Eina_Bool etvdb_language_set(Eina_Hash *hash, char *lang)
 {
 	if (!lang || (strlen(lang) != 2)) {
-		ERR("Invalid languages. Falling back to default.");
+		WARN("Invalid languages. Falling back to default.");
 		return EINA_FALSE;
 	}
 
