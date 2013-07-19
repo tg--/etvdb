@@ -254,7 +254,7 @@ static Eina_Bool _parse_series_cb(void *data, Eina_Simple_XML_Type type, const c
 			}
 			break;
 		case 2:
-			if (!strncmp("seriesid>", content, strlen("seriesid>")))
+			if (!strncmp("id>", content, strlen("id>")))
 				_xml_sibling = ID;
 			else if (!strncmp("SeriesName>", content, strlen("SeriesName>")))
 				_xml_sibling = NAME;
