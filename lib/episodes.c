@@ -294,7 +294,8 @@ static Eina_Bool _parse_episodes_cb(void *data, Eina_Simple_XML_Type type, const
 					MEM2STR(buf, content, length);
 					episode->series = etvdb_series_by_id_get(buf);
 					DBG("Found Series ID: %s", episode->series->id);
-				}
+				} else if (pdata->s)
+					episode->series = pdata->s;
 				break;
 			}
 		}
