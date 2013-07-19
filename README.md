@@ -15,7 +15,6 @@ and [cURL][3].
 -----------------
 A quick overview over the files and directories here:
 ```
-bin/ - contains the binary/executable files
 data/ - contains data used by the program
 external/ - 3rd party libraries
 lib/ - contains the library files
@@ -38,9 +37,4 @@ The dependencies are Eina, Ecore and libcurl.
 ----------
 libetvdb is available under the LGPLv2.1 or any later version.
 
-See COPYING-LGPL-2.1 for details.
-
-
-etvdb_cli is available under the GPLv3 or any later version.
-
-See COPYING-GPL-3 for details.
+See COPYING for details.

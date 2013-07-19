@@ -22,7 +22,6 @@ include_directories(${EINA_INCLUDE_DIRS} ${ECORE_INCLUDE_DIRS} ${ECORE-CON_INCLU
 
 add_subdirectory(external)
 add_subdirectory(lib)
-add_subdirectory(bin)
 
 # install data
 file(GLOB data data/*)
