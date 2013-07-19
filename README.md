@@ -25,7 +25,7 @@ lib/ - contains the library files
 This is super easy:
 ```
 mkdir BUILD/ && cd BUILD/
-cmake .. && make && make install
+cmake .. && make && sudo make install
 ```
 
 for a debugging build pass this to cmake:
