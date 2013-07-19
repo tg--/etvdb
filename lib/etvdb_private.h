@@ -56,6 +56,11 @@ typedef struct _download {
 	char *data;
 } Download;
 
+typedef struct _pdata {
+	Series *s;
+	Eina_List *list;
+} Episode_Parser_Data;
+
 size_t _dl_to_mem_cb(char *ptr, size_t size, size_t nmemb, void *userdata);
 
 #endif /* __ETVDB_PRIVATE_H__ */

@@ -16,35 +16,45 @@ static Eina_Bool _parse_episodes_cb(void *data, Eina_Simple_XML_Type type, const
 /**
  * @brief Get all Episodes of a Series
  *
- * This function takes a string, a TVDB Series ID, and retreives
+ * This function takes a etvdb Series struct and retrieves
  * all episodes for this series.
  * This list will contain all episodes without being structured
  * as seasons.
+ * If you don't require the list specifically, it is suggested to
+ * use etvdb_series_populate() instead.
  *
- * @param id TVDB ID of a series
+ * @param s initialized TVDB Series structure
  *
  * @return a list containing all episodes of a series.
  *
  * @ingroup Episodes
  */
-EAPI Eina_List *etvdb_episodes_get(const char *id)
+EAPI Eina_List *etvdb_episodes_get(Series *s)
 {
 	char uri[URI_MAX];
 	Download xml;
-	Eina_List *list = NULL;
+	Episode_Parser_Data pdata;
 
-	snprintf(uri, URI_MAX, TVDB_API_URI"/%s/series/%s/all/%s.xml", etvdb_api_key, id, etvdb_language);
+	pdata.s = s;
+	pdata.list = NULL;
+
+	if (!s->id) {
+		ERR("Passed series data is not valid.");
+		return NULL;
+	}
+
+	snprintf(uri, URI_MAX, TVDB_API_URI"/%s/series/%s/all/%s.xml", etvdb_api_key, s->id, etvdb_language);
 
 	CURL_XML_DL_MEM(xml, uri)
 		ERR("Couldn't get series data from server.");
 
 	_xml_count = _xml_depth = _xml_sibling = 0;
-	if (!eina_simple_xml_parse(xml.data, xml.len, EINA_TRUE, _parse_episodes_cb, &list))
+	if (!eina_simple_xml_parse(xml.data, xml.len, EINA_TRUE, _parse_episodes_cb, &pdata))
 		CRIT("Parsing Episode data failed. If it happens again, please report a bug.");
 
 	free(xml.data);
 
-	return list;
+	return pdata.list;
 }
 
 /**
@@ -55,17 +65,22 @@ EAPI Eina_List *etvdb_episodes_get(const char *id)
  *
  * @param id TVDB ID of a episode
  *
+ * @param s TVDB Series structure. If necessary it will be initialized, except if you pass NULL.
+ *
  * @return a Episode structure on success,
  * NULL on failure.
  *
  * @ingroup Episodes
  */
-EAPI Episode *etvdb_episode_by_id_get(const char *id)
+EAPI Episode *etvdb_episode_by_id_get(const char *id, Series *s)
 {
 	char uri[URI_MAX];
 	Download xml;
-	Eina_List *list = NULL;
+	Episode_Parser_Data pdata;
 	Episode *e = NULL;
+
+	pdata.s = s;
+	pdata.list = NULL;
 
 	snprintf(uri, URI_MAX, TVDB_API_URI"/%s/episodes/%s/%s.xml", etvdb_api_key, id, etvdb_language);
 
@@ -73,15 +88,15 @@ EAPI Episode *etvdb_episode_by_id_get(const char *id)
 		ERR("Couldn't get episode data from server.");
 
 	_xml_count = _xml_depth = _xml_sibling = 0;
-	if (!eina_simple_xml_parse(xml.data, xml.len, EINA_TRUE, _parse_episodes_cb, &list))
+	if (!eina_simple_xml_parse(xml.data, xml.len, EINA_TRUE, _parse_episodes_cb, &pdata))
 		CRIT("Parsing Episode data failed. If it happens again, please report a bug.");
 
 	free(xml.data);
 
 	/* we assume that only a single episode is in the list
 	 * should it be more (which would be a TVDB bug), its a memleak */
-	e = eina_list_data_get(list);
-	list = eina_list_remove_list(list, list);
+	e = eina_list_data_get(pdata.list);
+	pdata.list = eina_list_remove_list(pdata.list, pdata.list);
 
 	return e;
 }
@@ -92,7 +107,7 @@ EAPI Episode *etvdb_episode_by_id_get(const char *id)
  * This function will retreive the data for one episode,
  * according to its season and episode number.
  *
- * @param id TVDB ID of a series
+ * @param s initialized TVDB Series structure
  * @param season season number of the episode
  * @param episode episode number in the season
  *
@@ -101,29 +116,37 @@ EAPI Episode *etvdb_episode_by_id_get(const char *id)
  *
  * @ingroup Episodes
  */
-EAPI Episode *etvdb_episode_by_number_get(const char *id, int season, int episode)
+EAPI Episode *etvdb_episode_by_number_get(Series *s, int season, int episode)
 {
 	char uri[URI_MAX];
 	Download xml;
-	Eina_List *list = NULL;
 	Episode *e = NULL;
+	Episode_Parser_Data pdata;
+
+	pdata.s = s;
+	pdata.list = NULL;
+
+	if (!s->id) {
+		ERR("Passed series data is not valid.");
+		return NULL;
+	}
 
 	snprintf(uri, URI_MAX, TVDB_API_URI"/%s/series/%s/default/%d/%d/%s.xml",
-			etvdb_api_key, id, season, episode, etvdb_language);
+			etvdb_api_key, s->id, season, episode, etvdb_language);
 
 	CURL_XML_DL_MEM(xml, uri)
 		ERR("Couldn't get episode data from server.");
 
 	_xml_count = _xml_depth = _xml_sibling = 0;
-	if (!eina_simple_xml_parse(xml.data, xml.len, EINA_TRUE, _parse_episodes_cb, &list))
+	if (!eina_simple_xml_parse(xml.data, xml.len, EINA_TRUE, _parse_episodes_cb, &pdata))
 		CRIT("Parsing Episode data failed. If it happens again, please report a bug.");
 
 	free(xml.data);
 
 	/* we assume that only a single episode is in the list
 	 * should it be more (which would be a TVDB bug), its a memleak */
-	e = eina_list_data_get(list);
-	list = eina_list_remove_list(list, list);
+	e = eina_list_data_get(pdata.list);
+	pdata.list = eina_list_remove_list(pdata.list, pdata.list);
 
 	return e;
 }
@@ -132,6 +155,7 @@ EAPI Episode *etvdb_episode_by_number_get(const char *id, int season, int episod
  * @brief Free a Episode structure
  *
  * This function frees a Episode structure and its data.
+ * Note that a referenced parent series won't be freed.
  *
  * @param episode pointer to Episode structure
  *
@@ -175,9 +199,10 @@ static Eina_Bool _parse_episodes_cb(void *data, Eina_Simple_XML_Type type, const
 		unsigned offset, unsigned length)
 {
 	char buf[length + 1];
-	enum nname { UNKNOWN, ID, NAME, IMDB, OVERVIEW, NUMBER, SEASON };
+	enum nname { UNKNOWN, ID, NAME, IMDB, OVERVIEW, NUMBER, SEASON, SERIES };
 	Episode *episode;
-	Eina_List **list = data;
+	/* Eina_List **list = data; */
+	Episode_Parser_Data *pdata = data;
 
 	switch (type) {
 	case EINA_SIMPLE_XML_OPEN:
@@ -194,9 +219,10 @@ static Eina_Bool _parse_episodes_cb(void *data, Eina_Simple_XML_Type type, const
 				episode->imdb_id = NULL;
 				episode->name = NULL;
 				episode->overview = NULL;
+				episode->series = NULL;
 				episode->number = 0;
 				episode->season = 0;
-				*list = eina_list_append(*list, episode);
+				pdata->list = eina_list_append(pdata->list, episode);
 			}
 			break;
 		case 2:
@@ -212,6 +238,8 @@ static Eina_Bool _parse_episodes_cb(void *data, Eina_Simple_XML_Type type, const
 				_xml_sibling = NUMBER;
 			else if (!strncmp("SeasonNumber>", content, strlen("SeasonNumber>")))
 				_xml_sibling = SEASON;
+			else if (!strncmp("seriesid>", content, strlen("seriesid>")))
+				_xml_sibling = SERIES;
 			else
 				_xml_sibling = UNKNOWN;
 			break;
@@ -225,7 +253,7 @@ static Eina_Bool _parse_episodes_cb(void *data, Eina_Simple_XML_Type type, const
 		break;
 	case EINA_SIMPLE_XML_DATA:
 		if (_xml_depth == 2) {
-			episode = eina_list_nth(*list, _xml_count);
+			episode = eina_list_nth(pdata->list, _xml_count);
 
 			switch (_xml_sibling) {
 			case ID:
@@ -259,6 +287,13 @@ static Eina_Bool _parse_episodes_cb(void *data, Eina_Simple_XML_Type type, const
 				MEM2STR(buf, content, length);
 				episode->season = atoi(buf);
 				DBG("Found Season Number: %d", episode->season);
+				break;
+			case SERIES:
+				if (pdata->s && !pdata->s->id) {
+					MEM2STR(buf, content, length);
+					episode->series = etvdb_series_by_id_get(buf);
+					DBG("Found Series ID: %s", episode->series->id);
+				}
 				break;
 			}
 		}

@@ -138,7 +138,7 @@ EAPI Eina_Bool etvdb_series_populate(Series *s)
 		return EINA_FALSE;
 	}
 
-	all = etvdb_episodes_get(s->id);
+	all = etvdb_episodes_get(s);
 	if (!all) {
 		ERR("Couldn't get Episodes for Series %s", s->id);
 		return EINA_FALSE;
