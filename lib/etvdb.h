@@ -47,7 +47,6 @@
 #include <string.h>
 #include <Eina.h>
 #include <Ecore.h>
-#include <Ecore_Con.h>
 
 #ifdef EAPI
 # undef EAPI
