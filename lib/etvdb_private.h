@@ -51,14 +51,16 @@ int _etvdb_log_dom;
 int _xml_count, _xml_depth, _xml_sibling;
 CURL *curl_handle;
 
+/** Structure representing a download */
 typedef struct _download {
-	size_t len;
-	char *data;
+	size_t len; /**< Total Length */
+	char *data; /**< Download Data */
 } Download;
 
+/** Structure to be passed to the episode parser */
 typedef struct _pdata {
-	Series *s;
-	Eina_List *list;
+	Series *s; /**< A series structure */
+	Eina_List *list; /**< An Eina_List */
 } Episode_Parser_Data;
 
 size_t _dl_to_mem_cb(char *ptr, size_t size, size_t nmemb, void *userdata);

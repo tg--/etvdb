@@ -68,7 +68,7 @@ EAPI Eina_List *etvdb_episodes_get(Series *s)
  * @param s TVDB Series structure. If necessary it will be initialized, except if you pass NULL.
  *
  * @return a Episode structure on success,
- * NULL on failure.
+ * @return NULL on failure.
  *
  * @ingroup Episodes
  */
@@ -112,7 +112,7 @@ EAPI Episode *etvdb_episode_by_id_get(const char *id, Series *s)
  * @param episode episode number in the season
  *
  * @return a Episode structure on success,
- * NULL on failure.
+ * @return NULL on failure.
  *
  * @ingroup Episodes
  */
@@ -157,7 +157,7 @@ EAPI Episode *etvdb_episode_by_number_get(Series *s, int season, int episode)
  * This function frees a Episode structure and its data.
  * Note that a referenced parent series won't be freed.
  *
- * @param episode pointer to Episode structure
+ * @param e pointer to Episode structure
  *
  * @ingroup Episodes
  */
@@ -181,7 +181,8 @@ EAPI void etvdb_episode_free(Episode *e)
  * @param season season number, 0 for specials
  * @param episode episode number
  *
- * @return NULL on failure, pointer to episode structure on success
+ * @return pointer to episode structure on success
+ * @return NULL on failure
  */
 EAPI Episode *etvdb_episode_from_series_get(Series *s, int season, int episode)
 {

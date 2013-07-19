@@ -19,12 +19,14 @@ static Eina_Bool _parse_series_cb(void *data, Eina_Simple_XML_Type type, const c
  * This function will retreive the data for one series,
  * identified by its TVDB ID.
  * This is a TVDB Base Series Record, if you need all the
- * episodes, you additionally should @see etvdb_series_populate.
+ * episodes, you additionally should call etvdb_series_populate() instead.
+ *
+ * @see etvdb_series_populate.
  *
  * @param id TVDB ID of a series
  *
  * @return a Series structure on success,
- * NULL on failure.
+ * @return NULL on failure.
  *
  * @ingroup Series
  */
@@ -121,7 +123,8 @@ EAPI Eina_List *etvdb_series_find(const char *name)
  *
  * @param s pointer to Series structure.
  *
- * @return EINA_TRUE on success, EINA_FALSE on failure.
+ * @return EINA_TRUE on success
+ * @return EINA_FALSE on failure.
  *
  * @ingroup Series
  *
@@ -207,7 +210,8 @@ EAPI void etvdb_series_free(Series *s)
  * @param s pointer to Series static
  * @param season number of the season
  *
- * @return 0 on error or empty structure, number of seasons >=1 on success
+ * @return number of seasons >=1 on success
+ * @return 0 on error or empty structure
  *
  * @ingroup Series
  */
