@@ -63,6 +63,9 @@ EAPI Series *etvdb_series_by_id_get(const char *id)
  * This function takes a name to search for.
  * It can also search by IMDB ID (parameter starting with "tt"),
  * or by zap2it ID (starting with "SH").
+ * Important: TVDBs search only delivers a subset of a Base Series Record,
+ * so you will have to retrieve the full Record by etvdb_series_by_id_get()
+ * after the correct Series has been selected from the list.
  *
  * @param name string to search for (name or id of the series).
  *
