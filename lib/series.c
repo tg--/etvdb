@@ -229,7 +229,7 @@ static Eina_Bool _parse_series_cb(void *data, Eina_Simple_XML_Type type, const c
 		unsigned offset, unsigned length)
 {
 	char buf[length + 1];
-	enum nname { UNKNOWN, ID, NAME, IMDB, OVERVIEW};
+	enum nname { UNKNOWN, ID, NAME, IMDB, OVERVIEW, RUNTIME };
 	Series *series;
 	Eina_List **list = data;
 
@@ -250,6 +250,7 @@ static Eina_Bool _parse_series_cb(void *data, Eina_Simple_XML_Type type, const c
 				series->overview = NULL;
 				series->seasons = NULL;
 				series->specials = NULL;
+				series->runtime = 0;
 				*list = eina_list_append(*list, series);
 			}
 			break;
@@ -262,6 +263,8 @@ static Eina_Bool _parse_series_cb(void *data, Eina_Simple_XML_Type type, const c
 				_xml_sibling = IMDB;
 			else if (!strncmp("Overview>", content, strlen("Overview>")))
 				_xml_sibling = OVERVIEW;
+			else if (!strncmp("Runtime>", content, strlen("Runtime>")))
+				_xml_sibling = RUNTIME;
 			else
 				_xml_sibling = UNKNOWN;
 			break;
@@ -299,6 +302,11 @@ static Eina_Bool _parse_series_cb(void *data, Eina_Simple_XML_Type type, const c
 				MEM2STR(buf, content, length);
 				HTML2UTF(series->overview, buf);
 				DBG("Found Overview: %zu chars", strlen(series->overview));
+				break;
+			case RUNTIME:
+				MEM2STR(buf, content, length);
+				series->runtime = atoi(buf);
+				DBG("Found Runtime: %d", series->runtime);
 				break;
 			}
 		}

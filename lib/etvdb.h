@@ -92,6 +92,7 @@ typedef struct _etvdb_series {
 	char *imdb_id; /**< IMDB Series ID */
 	char *name; /**< Series Name */
 	char *overview; /**< Series Description */
+	int runtime; /**< Typical Episode Runtime */
 	Eina_List *seasons; /**< List containing 1 list per season */
 	Eina_List *specials; /**< List containing special episodes */
 } Series;
