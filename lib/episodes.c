@@ -209,11 +209,11 @@ static Eina_Bool _parse_episodes_cb(void *data, Eina_Simple_XML_Type type, const
 	case EINA_SIMPLE_XML_OPEN:
 		switch (_xml_depth) {
 		case 0:
-			if (!strncmp("Data>", content, strlen("Data>")))
+			if (!memcmp("Data>", content, strlen("Data>")))
 				_xml_depth++;
 			break;
 		case 1:
-			if (!strncmp("Episode>", content, strlen("Episode>"))) {
+			if (!memcmp("Episode>", content, strlen("Episode>"))) {
 				_xml_depth++;
 				episode = malloc(sizeof(Episode));
 				episode->id = NULL;
@@ -227,19 +227,19 @@ static Eina_Bool _parse_episodes_cb(void *data, Eina_Simple_XML_Type type, const
 			}
 			break;
 		case 2:
-			if (!strncmp("id>", content, strlen("id>")))
+			if (!memcmp("id>", content, strlen("id>")))
 				_xml_sibling = ID;
-			else if (!strncmp("EpisodeName>", content, strlen("EpisodeName>")))
+			else if (!memcmp("EpisodeName>", content, strlen("EpisodeName>")))
 				_xml_sibling = NAME;
-			else if (!strncmp("IMDB_ID>", content, strlen("IMDB_ID>")))
+			else if (!memcmp("IMDB_ID>", content, strlen("IMDB_ID>")))
 				_xml_sibling = IMDB;
-			else if (!strncmp("Overview>", content, strlen("Overview>")))
+			else if (!memcmp("Overview>", content, strlen("Overview>")))
 				_xml_sibling = OVERVIEW;
-			else if (!strncmp("EpisodeNumber>", content, strlen("EpisodeNumber>")))
+			else if (!memcmp("EpisodeNumber>", content, strlen("EpisodeNumber>")))
 				_xml_sibling = NUMBER;
-			else if (!strncmp("SeasonNumber>", content, strlen("SeasonNumber>")))
+			else if (!memcmp("SeasonNumber>", content, strlen("SeasonNumber>")))
 				_xml_sibling = SEASON;
-			else if (!strncmp("seriesid>", content, strlen("seriesid>")))
+			else if (!memcmp("seriesid>", content, strlen("seriesid>")))
 				_xml_sibling = SERIES;
 			else
 				_xml_sibling = UNKNOWN;
@@ -247,7 +247,7 @@ static Eina_Bool _parse_episodes_cb(void *data, Eina_Simple_XML_Type type, const
 		}
 		break;
 	case EINA_SIMPLE_XML_CLOSE:
-		if (!strncmp("Episode>", content, strlen("Episode>"))) {
+		if (!memcmp("Episode>", content, strlen("Episode>"))) {
 			_xml_count++;
 			_xml_depth--;
 		}

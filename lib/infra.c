@@ -168,20 +168,20 @@ static Eina_Bool _parse_lang_cb(void *data, Eina_Simple_XML_Type type, const cha
 	case EINA_SIMPLE_XML_OPEN:
 		switch (_xml_depth) {
 		case 0:
-			if (!strncmp("Languages>", content, strlen("Languages>")))
+			if (!memcmp("Languages>", content, strlen("Languages>")))
 				_xml_depth++;
 			break;
 		case 1:
-			if (!strncmp("Language>", content, strlen("Language>"))) {
+			if (!memcmp("Language>", content, strlen("Language>"))) {
 				_xml_depth++;
 				eina_convert_itoa(_xml_count, itoa);
 				eina_hash_add(data, itoa, "");
 			}
 			break;
 		case 2:
-			if (!strncmp("name>", content, strlen("name>")))
+			if (!memcmp("name>", content, strlen("name>")))
 				_xml_sibling = NAME;
-			else if (!strncmp("abbreviation>", content, strlen("abbreviation>")))
+			else if (!memcmp("abbreviation>", content, strlen("abbreviation>")))
 				_xml_sibling = ABBR;
 			else
 				_xml_sibling = UNKNOWN;
@@ -189,7 +189,7 @@ static Eina_Bool _parse_lang_cb(void *data, Eina_Simple_XML_Type type, const cha
 		}
 		break;
 	case EINA_SIMPLE_XML_CLOSE:
-		if (!strncmp("Language>", content, strlen("Language>"))) {
+		if (!memcmp("Language>", content, strlen("Language>"))) {
 			_xml_count++;
 			_xml_depth--;
 		}
@@ -221,7 +221,7 @@ static Eina_Bool _parse_lang_cb(void *data, Eina_Simple_XML_Type type, const cha
 				 * otherwise the xml is invalid */
 				void *p = (char *)eina_hash_find(data, itoa);
 				if (p)
-					if (strncmp(p, "", 1) == 0)
+					if (memcmp(p, "", 1) == 0)
 						eina_hash_set(data, itoa, strdup(buf));
 					else
 						eina_hash_move(data, itoa, buf);
@@ -244,9 +244,9 @@ static Eina_Bool _parse_time_cb(void *data, Eina_Simple_XML_Type type, const cha
 
 	switch (type) {
 	case EINA_SIMPLE_XML_OPEN:
-		if (_xml_depth == 0 && !strncmp("Items>", content, strlen("Items>")))
+		if (_xml_depth == 0 && !memcmp("Items>", content, strlen("Items>")))
 			_xml_depth++;
-		else if (_xml_depth == 1 && !strncmp("Time>", content, strlen("Time>")))
+		else if (_xml_depth == 1 && !memcmp("Time>", content, strlen("Time>")))
 			_xml_depth++;
 		break;
 	case EINA_SIMPLE_XML_DATA:

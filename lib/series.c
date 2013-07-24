@@ -83,11 +83,11 @@ EAPI Eina_List *etvdb_series_find(const char *name)
 	if (!name)
 		return NULL;
 
-	if (!strncmp(name, "tt", 2)) {
+	if (!memcmp(name, "tt", 2)) {
 		DBG("Searching by IMDB ID: %s", name);
 		snprintf(uri, URI_MAX, TVDB_API_URI"/GetSeriesByRemoteID.php?imdbid=%s&language=%s",
 				name, etvdb_language);
-	} else if (!strncmp(name, "SH", 2)) {
+	} else if (!memcmp(name, "SH", 2)) {
 		DBG("Searching by zap2it ID: %s", name);
 		snprintf(uri, URI_MAX, TVDB_API_URI"/GetSeriesByRemoteID.php?zap2it=%s&language=%s",
 				name, etvdb_language);
@@ -240,11 +240,11 @@ static Eina_Bool _parse_series_cb(void *data, Eina_Simple_XML_Type type, const c
 	case EINA_SIMPLE_XML_OPEN:
 		switch (_xml_depth) {
 		case 0:
-			if (!strncmp("Data>", content, strlen("Data>")))
+			if (!memcmp("Data>", content, strlen("Data>")))
 				_xml_depth++;
 			break;
 		case 1:
-			if (!strncmp("Series>", content, strlen("Series>"))) {
+			if (!memcmp("Series>", content, strlen("Series>"))) {
 				_xml_depth++;
 				series = malloc(sizeof(Series));
 				series->id = NULL;
@@ -258,15 +258,15 @@ static Eina_Bool _parse_series_cb(void *data, Eina_Simple_XML_Type type, const c
 			}
 			break;
 		case 2:
-			if (!strncmp("id>", content, strlen("id>")))
+			if (!memcmp("id>", content, strlen("id>")))
 				_xml_sibling = ID;
-			else if (!strncmp("SeriesName>", content, strlen("SeriesName>")))
+			else if (!memcmp("SeriesName>", content, strlen("SeriesName>")))
 				_xml_sibling = NAME;
-			else if (!strncmp("IMDB_ID>", content, strlen("IMDB_ID>")))
+			else if (!memcmp("IMDB_ID>", content, strlen("IMDB_ID>")))
 				_xml_sibling = IMDB;
-			else if (!strncmp("Overview>", content, strlen("Overview>")))
+			else if (!memcmp("Overview>", content, strlen("Overview>")))
 				_xml_sibling = OVERVIEW;
-			else if (!strncmp("Runtime>", content, strlen("Runtime>")))
+			else if (!memcmp("Runtime>", content, strlen("Runtime>")))
 				_xml_sibling = RUNTIME;
 			else
 				_xml_sibling = UNKNOWN;
@@ -274,7 +274,7 @@ static Eina_Bool _parse_series_cb(void *data, Eina_Simple_XML_Type type, const c
 		}
 		break;
 	case EINA_SIMPLE_XML_CLOSE:
-		if(!strncmp("Series>", content, strlen("Series>"))) {
+		if(!memcmp("Series>", content, strlen("Series>"))) {
 			_xml_count++;
 			_xml_depth--;
 		}
