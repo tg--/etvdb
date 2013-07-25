@@ -202,7 +202,6 @@ static Eina_Bool _parse_episodes_cb(void *data, Eina_Simple_XML_Type type, const
 	char buf[length + 1];
 	enum nname { UNKNOWN, ID, NAME, IMDB, OVERVIEW, NUMBER, SEASON, SERIES };
 	Episode *episode;
-	/* Eina_List **list = data; */
 	Episode_Parser_Data *pdata = data;
 
 	switch (type) {
