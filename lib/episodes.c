@@ -292,9 +292,9 @@ static Eina_Bool _parse_episodes_cb(void *data, Eina_Simple_XML_Type type, const
 				if (pdata->s && pdata->s->id) {
 					DBG("Found Series ID, but using existing one.");
 					episode->series = pdata->s;
-				} else {
+				} else if (pdata->s) {
 					MEM2STR(buf, content, length);
-					episode->series = etvdb_series_by_id_get(buf);
+					pdata->s = episode->series = etvdb_series_by_id_get(buf);
 					DBG("Found Series ID: %s", episode->series->id);
 				}
 				break;
