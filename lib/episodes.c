@@ -65,7 +65,7 @@ EAPI Eina_List *etvdb_episodes_get(Series *s)
  *
  * @param id TVDB ID of a episode
  *
- * @param s TVDB Series structure. If necessary it will be initialized, except if you pass NULL.
+ * @param s TVDB Series structure. If necessary it will be initialized.
  *
  * @return a Episode structure on success,
  * @return NULL on failure.
@@ -292,7 +292,7 @@ static Eina_Bool _parse_episodes_cb(void *data, Eina_Simple_XML_Type type, const
 				if (pdata->s && pdata->s->id) {
 					DBG("Found Series ID, but using existing one.");
 					episode->series = pdata->s;
-				} else if (pdata->s) {
+				} else {
 					MEM2STR(buf, content, length);
 					pdata->s = episode->series = etvdb_series_by_id_get(buf);
 					DBG("Found Series ID: %s", episode->series->id);
