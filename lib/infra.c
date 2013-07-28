@@ -219,9 +219,9 @@ static Eina_Bool _parse_lang_cb(void *data, Eina_Simple_XML_Type type, const cha
 				/* if the hash is found an contains an empty string, add key as data;
 				 * if found, but not empty, rename the key
 				 * otherwise the xml is invalid */
-				void *p = (char *)eina_hash_find(data, itoa);
+				char *p = (char *)eina_hash_find(data, itoa);
 				if (p)
-					if (memcmp(p, "", 1) == 0)
+					if (*p == '\0')
 						eina_hash_set(data, itoa, strdup(buf));
 					else
 						eina_hash_move(data, itoa, buf);
