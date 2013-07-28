@@ -208,11 +208,11 @@ static Eina_Bool _parse_episodes_cb(void *data, Eina_Simple_XML_Type type, const
 	case EINA_SIMPLE_XML_OPEN:
 		switch (_xml_depth) {
 		case 0:
-			if (!memcmp("Data>", content, strlen("Data>")))
+			if (!TAGCMP("Data", content))
 				_xml_depth++;
 			break;
 		case 1:
-			if (!memcmp("Episode>", content, strlen("Episode>"))) {
+			if (!TAGCMP("Episode", content)) {
 				_xml_depth++;
 				episode = malloc(sizeof(Episode));
 				episode->id = NULL;
@@ -226,19 +226,19 @@ static Eina_Bool _parse_episodes_cb(void *data, Eina_Simple_XML_Type type, const
 			}
 			break;
 		case 2:
-			if (!memcmp("id>", content, strlen("id>")))
+			if (!TAGCMP("id", content))
 				_xml_sibling = ID;
-			else if (!memcmp("EpisodeName>", content, strlen("EpisodeName>")))
+			else if (!TAGCMP("EpisodeName", content))
 				_xml_sibling = NAME;
-			else if (!memcmp("IMDB_ID>", content, strlen("IMDB_ID>")))
+			else if (!TAGCMP("IMDB_ID", content))
 				_xml_sibling = IMDB;
-			else if (!memcmp("Overview>", content, strlen("Overview>")))
+			else if (!TAGCMP("Overview", content))
 				_xml_sibling = OVERVIEW;
-			else if (!memcmp("EpisodeNumber>", content, strlen("EpisodeNumber>")))
+			else if (!TAGCMP("EpisodeNumber", content))
 				_xml_sibling = NUMBER;
-			else if (!memcmp("SeasonNumber>", content, strlen("SeasonNumber>")))
+			else if (!TAGCMP("SeasonNumber", content))
 				_xml_sibling = SEASON;
-			else if (!memcmp("seriesid>", content, strlen("seriesid>")))
+			else if (!TAGCMP("seriesid", content))
 				_xml_sibling = SERIES;
 			else
 				_xml_sibling = UNKNOWN;
@@ -246,7 +246,7 @@ static Eina_Bool _parse_episodes_cb(void *data, Eina_Simple_XML_Type type, const
 		}
 		break;
 	case EINA_SIMPLE_XML_CLOSE:
-		if (!memcmp("Episode>", content, strlen("Episode>"))) {
+		if (!TAGCMP("Episode", content)) {
 			_xml_count++;
 			_xml_depth--;
 		}

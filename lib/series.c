@@ -240,11 +240,11 @@ static Eina_Bool _parse_series_cb(void *data, Eina_Simple_XML_Type type, const c
 	case EINA_SIMPLE_XML_OPEN:
 		switch (_xml_depth) {
 		case 0:
-			if (!memcmp("Data>", content, strlen("Data>")))
+			if (!TAGCMP("Data", content))
 				_xml_depth++;
 			break;
 		case 1:
-			if (!memcmp("Series>", content, strlen("Series>"))) {
+			if (!TAGCMP("Series", content)) {
 				_xml_depth++;
 				series = malloc(sizeof(Series));
 				series->id = NULL;
@@ -258,15 +258,15 @@ static Eina_Bool _parse_series_cb(void *data, Eina_Simple_XML_Type type, const c
 			}
 			break;
 		case 2:
-			if (!memcmp("id>", content, strlen("id>")))
+			if (!TAGCMP("id", content))
 				_xml_sibling = ID;
-			else if (!memcmp("SeriesName>", content, strlen("SeriesName>")))
+			else if (!TAGCMP("SeriesName", content))
 				_xml_sibling = NAME;
-			else if (!memcmp("IMDB_ID>", content, strlen("IMDB_ID>")))
+			else if (!TAGCMP("IMDB_ID", content))
 				_xml_sibling = IMDB;
-			else if (!memcmp("Overview>", content, strlen("Overview>")))
+			else if (!TAGCMP("Overview", content))
 				_xml_sibling = OVERVIEW;
-			else if (!memcmp("Runtime>", content, strlen("Runtime>")))
+			else if (!TAGCMP("Runtime", content))
 				_xml_sibling = RUNTIME;
 			else
 				_xml_sibling = UNKNOWN;
@@ -274,7 +274,7 @@ static Eina_Bool _parse_series_cb(void *data, Eina_Simple_XML_Type type, const c
 		}
 		break;
 	case EINA_SIMPLE_XML_CLOSE:
-		if(!memcmp("Series>", content, strlen("Series>"))) {
+		if(!TAGCMP("Series", content)) {
 			_xml_count++;
 			_xml_depth--;
 		}

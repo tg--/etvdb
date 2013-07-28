@@ -168,20 +168,20 @@ static Eina_Bool _parse_lang_cb(void *data, Eina_Simple_XML_Type type, const cha
 	case EINA_SIMPLE_XML_OPEN:
 		switch (_xml_depth) {
 		case 0:
-			if (!memcmp("Languages>", content, strlen("Languages>")))
+			if (!TAGCMP("Languages", content))
 				_xml_depth++;
 			break;
 		case 1:
-			if (!memcmp("Language>", content, strlen("Language>"))) {
+			if (!TAGCMP("Language", content)) {
 				_xml_depth++;
 				eina_convert_itoa(_xml_count, itoa);
 				eina_hash_add(data, itoa, "");
 			}
 			break;
 		case 2:
-			if (!memcmp("name>", content, strlen("name>")))
+			if (!TAGCMP("name", content))
 				_xml_sibling = NAME;
-			else if (!memcmp("abbreviation>", content, strlen("abbreviation>")))
+			else if (!TAGCMP("abbreviation", content))
 				_xml_sibling = ABBR;
 			else
 				_xml_sibling = UNKNOWN;
@@ -189,7 +189,7 @@ static Eina_Bool _parse_lang_cb(void *data, Eina_Simple_XML_Type type, const cha
 		}
 		break;
 	case EINA_SIMPLE_XML_CLOSE:
-		if (!memcmp("Language>", content, strlen("Language>"))) {
+		if (!TAGCMP("Language", content)) {
 			_xml_count++;
 			_xml_depth--;
 		}
@@ -244,9 +244,9 @@ static Eina_Bool _parse_time_cb(void *data, Eina_Simple_XML_Type type, const cha
 
 	switch (type) {
 	case EINA_SIMPLE_XML_OPEN:
-		if (_xml_depth == 0 && !memcmp("Items>", content, strlen("Items>")))
+		if (_xml_depth == 0 && !TAGCMP("Items", content))
 			_xml_depth++;
-		else if (_xml_depth == 1 && !memcmp("Time>", content, strlen("Time>")))
+		else if (_xml_depth == 1 && !TAGCMP("Time", content))
 			_xml_depth++;
 		break;
 	case EINA_SIMPLE_XML_DATA:

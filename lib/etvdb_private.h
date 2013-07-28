@@ -21,6 +21,11 @@
 	memcpy(dst, src, slen); \
 	dst[slen] = '\0';
 
+/* convenience macro to compare a tag to unterminated input.
+ * it is meant to be used with eina simple_xml only. */
+#define TAGCMP(s1, s2) \
+	memcmp(s1">", s2, strlen(s1">"))
+
 /* convenience macro to download a xml to memory
  * use very carefully! dl.data has to bee free()d!
  * the block following will be executed when the download fails. */
