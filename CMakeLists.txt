@@ -5,11 +5,15 @@ set(PACKAGE ${CMAKE_PROJECT_NAME})
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -std=gnu99")
 
+set(DATADIR "share/etvdb")
+
 # enable Debug build
 ## build with -D DEBUG=ON
 option(DEBUG debug OFF)
 if(DEBUG)
 	add_definitions(-DDEBUG -g -Wall -O0)
+else()
+	add_definitions(-DDATA_LANG_FILE_XML="${CMAKE_INSTALL_PREFIX}/${DATADIR}/languages.xml")
 endif(DEBUG)
 
 INCLUDE(FindPkgConfig)
@@ -23,7 +27,7 @@ add_subdirectory(lib)
 
 # install data
 file(GLOB data data/*)
-install(FILES ${data} DESTINATION share/etvdb)
+install(FILES ${data} DESTINATION ${DATADIR})
 
 # add a target to generate API documentation with Doxygen
 find_package(Doxygen)
