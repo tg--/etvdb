@@ -127,6 +127,7 @@ EAPI Series        *etvdb_series_by_id_get(const char *id);
 EAPI int            etvdb_series_episodes_count(Series *s, int season);
 EAPI Eina_List     *etvdb_series_find(const char *name);
 EAPI void           etvdb_series_free(Series *s);
+EAPI Series        *etvdb_series_from_list_get(Eina_List *list, int number);
 EAPI Eina_Bool      etvdb_series_populate(Series *s);
 
 EAPI Eina_List     *etvdb_episodes_get(Series *s);

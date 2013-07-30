@@ -58,6 +58,47 @@ EAPI Series *etvdb_series_by_id_get(const char *id)
 }
 
 /**
+ * @brief Get a Series from a list and initialize it fully
+ *
+ * This function gets a Series from a List, usually one generated
+ * with etvdb_series_find() and retreives the full Base Series Record for it.
+ * This can be done by using eina_list_nth() and etvdb_series_by_id_get
+ * for example, so this is only a convenience function, hiding the problem,
+ * that TVDB search only returns a subset of a Base Series Record per series.
+ *
+ * @param list a list containing etvdb Series structures
+ * @param number the number of the list item to use
+ *
+ * @return a fully initialized Series on success.
+ * @return NULL on failure.
+ *
+ */
+EAPI Series *etvdb_series_from_list_get(Eina_List *list, int number)
+{
+	int count;
+	char *id;
+	Series *s;
+
+	if (number < 0) {
+		ERR("Invalid Number. Only 0 and above are allowed.");
+		return NULL;
+	}
+
+	count = eina_list_count(list);
+	if (number >= count) {
+		ERR("The selected list only has %d entries.", count);
+		return NULL;
+	}
+
+	s = eina_list_nth(list, number);
+	id = strdup(s->id);
+	s = etvdb_series_by_id_get(id);
+	free(id);
+
+	return s;
+}
+
+/**
  * @brief Find Series by Name
  *
  * This function takes a name to search for.
@@ -66,6 +107,10 @@ EAPI Series *etvdb_series_by_id_get(const char *id)
  * Important: TVDBs search only delivers a subset of a Base Series Record,
  * so you will have to retrieve the full Record by etvdb_series_by_id_get()
  * after the correct Series has been selected from the list.
+ *
+ * It is suggested to not use Eina_List functions to retreive one of the
+ * Series, but call evdb_series_from_list_get() instead, because it will spare
+ * you some further hassle, though of course you can do so if you wish.
  *
  * @param name string to search for (name or id of the series).
  *
