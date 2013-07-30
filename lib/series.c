@@ -19,7 +19,7 @@ static Eina_Bool _parse_series_cb(void *data, Eina_Simple_XML_Type type, const c
  * This function will retreive the data for one series,
  * identified by its TVDB ID.
  * This is a TVDB Base Series Record, if you need all the
- * episodes, you additionally should call etvdb_series_populate() instead.
+ * episodes, you additionally need to call etvdb_series_populate().
  *
  * @see etvdb_series_populate.
  *
