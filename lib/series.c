@@ -72,6 +72,7 @@ EAPI Series *etvdb_series_by_id_get(const char *id)
  * @return a fully initialized Series on success.
  * @return NULL on failure.
  *
+ * @ingroup Series
  */
 EAPI Series *etvdb_series_from_list_get(Eina_List *list, int number)
 {
