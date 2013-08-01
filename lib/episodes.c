@@ -184,6 +184,8 @@ EAPI void etvdb_episode_free(Episode *e)
  *
  * @return pointer to episode structure on success
  * @return NULL on failure
+ *
+ * @ingroup Episodes
  */
 EAPI Episode *etvdb_episode_from_series_get(Series *s, int season, int episode)
 {
