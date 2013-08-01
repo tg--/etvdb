@@ -228,7 +228,7 @@ EAPI Episode *etvdb_episode_latest_aired_get(Series *s, char *date)
 	else {
 		time(&t);
 		ltime = localtime(&t);
-		strftime(tstr, 10, "%Y-%m-%d", ltime);
+		strftime(tstr, 10, "%F", ltime);
 	}
 
 	lseasons = eina_list_last(s->seasons);
