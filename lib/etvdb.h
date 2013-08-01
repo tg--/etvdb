@@ -107,6 +107,7 @@ typedef struct _etvdb_episode {
 	char *imdb_id; /**< IMDB Episode ID */
 	char *name; /**< Episode Name */
 	char *overview; /**< Episode Description */
+	char *firstaired; /**< Episode aired first at this date */
 	int number; /**< Episode Number in Season */
 	int season; /**< Season Number in Series */
 	Series *series; /**< parent Series structure */

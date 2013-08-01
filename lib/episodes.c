@@ -167,6 +167,7 @@ EAPI void etvdb_episode_free(Episode *e)
 	free(e->imdb_id);
 	free(e->name);
 	free(e->overview);
+	free(e->firstaired);
 	free(e);
 }
 
@@ -200,7 +201,7 @@ static Eina_Bool _parse_episodes_cb(void *data, Eina_Simple_XML_Type type, const
 		unsigned offset, unsigned length)
 {
 	char buf[length + 1];
-	enum nname { UNKNOWN, ID, NAME, IMDB, OVERVIEW, NUMBER, SEASON, SERIES };
+	enum nname { UNKNOWN, ID, NAME, IMDB, OVERVIEW, FIRSTAIRED, NUMBER, SEASON, SERIES };
 	Episode *episode;
 	Episode_Parser_Data *pdata = data;
 
@@ -234,6 +235,8 @@ static Eina_Bool _parse_episodes_cb(void *data, Eina_Simple_XML_Type type, const
 				_xml_sibling = IMDB;
 			else if (!TAGCMP("Overview", content))
 				_xml_sibling = OVERVIEW;
+			else if (!TAGCMP("FirstAired", content))
+				_xml_sibling = FIRSTAIRED;
 			else if (!TAGCMP("EpisodeNumber", content))
 				_xml_sibling = NUMBER;
 			else if (!TAGCMP("SeasonNumber", content))
@@ -277,6 +280,11 @@ static Eina_Bool _parse_episodes_cb(void *data, Eina_Simple_XML_Type type, const
 				MEM2STR(buf, content, length);
 				HTML2UTF(episode->overview, buf);
 				DBG("Found Overview: %zu chars", strlen(episode->overview));
+				break;
+			case FIRSTAIRED:
+				episode->firstaired = malloc(length + 1);
+				MEM2STR(episode->firstaired, content, length);
+				DBG("Found First Aired Date: %s", episode->firstaired);
 				break;
 			case NUMBER:
 				MEM2STR(buf, content, length);
