@@ -223,19 +223,26 @@ EAPI Episode *etvdb_episode_latest_aired_get(Series *s, char *date)
 
 	tstr = malloc(11);
 
-	if (date)
+	if (date) {
+		DBG("Requsted Date: %s", date);
 		tstr = strncpy(tstr, date, 10);
-	else {
+	} else {
 		time(&t);
 		ltime = localtime(&t);
-		strftime(tstr, 10, "%F", ltime);
+		strftime(tstr, 11, "%F", ltime);
 	}
+
+	DBG("Selected Date: %s", tstr);
 
 	lseasons = eina_list_last(s->seasons);
 	EINA_LIST_REVERSE_FOREACH(lseasons, l, lepisodes) {
 		EINA_LIST_REVERSE_FOREACH(lepisodes, ll, e) {
-			if (e->firstaired && strcmp(e->firstaired, tstr) <= 0)
-				goto END;
+			if (e->firstaired) {
+				if (strcmp(e->firstaired, tstr) <= 0) {
+					DBG("Latest Episode aired on: %s", e->firstaired);
+					goto END;
+				}
+			}
 		}
 	}
 
