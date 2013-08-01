@@ -192,6 +192,55 @@ EAPI Episode *etvdb_episode_from_series_get(Series *s, int season, int episode)
 	else
 		return eina_list_nth(eina_list_nth(s->seasons, season - 1), episode - 1);
 }
+
+/**
+ * @brief Get the Episode that aired most recently
+ *
+ * This function returns the Episode that initially aired last
+ * before today or a given date.
+ *
+ * The date string has to be in an ISO 8601 format and contain only the date.
+ * Behaviour for any other input is undefined.
+ * Example: 2013-03-28
+ *
+ * @param s Series data
+ * @param date a string containing an ISO 8601 date or NULL for today
+ *
+ * @return the Episode aired latest
+ * @return NULL on failure
+ *
+ * @ingroup Episodes
+ */
+EAPI Episode *etvdb_episode_latest_aired_get(Series *s, char *date)
+{
+	char *tstr;
+	struct tm *ltime;
+	time_t t;
+	Eina_List *lseasons, *lepisodes, *l, *ll;
+	Episode *e = NULL;
+
+	tstr = malloc(11);
+
+	if (date)
+		tstr = strncpy(tstr, date, 10);
+	else {
+		time(&t);
+		ltime = localtime(&t);
+		strftime(tstr, 10, "%Y-%m-%d", ltime);
+	}
+
+	lseasons = eina_list_last(s->seasons);
+	EINA_LIST_REVERSE_FOREACH(lseasons, l, lepisodes) {
+		EINA_LIST_REVERSE_FOREACH(lepisodes, ll, e) {
+			if (e->firstaired && strcmp(e->firstaired, tstr) <= 0)
+				goto END;
+		}
+	}
+
+END:
+	free(tstr);
+	return e;
+}
 /**
  * @}
  */

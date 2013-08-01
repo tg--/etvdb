@@ -45,6 +45,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <Eina.h>
 
 #ifdef EAPI
@@ -136,6 +137,7 @@ EAPI Episode       *etvdb_episode_by_id_get(const char *id, Series *s);
 EAPI Episode       *etvdb_episode_by_number_get(Series *s, int season, int episode);
 EAPI void           etvdb_episode_free(Episode *e);
 EAPI Episode       *etvdb_episode_from_series_get(Series *s, int season, int episode);
+EAPI Episode       *etvdb_episode_latest_aired_get(Series *s, char *timestr);
 /**
  * @}
  */
