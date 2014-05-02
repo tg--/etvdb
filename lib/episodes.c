@@ -276,6 +276,7 @@ static Eina_Bool _parse_episodes_cb(void *data, Eina_Simple_XML_Type type, const
 				episode = malloc(sizeof(Episode));
 				episode->id = NULL;
 				episode->imdb_id = NULL;
+				episode->firstaired = NULL;
 				episode->name = NULL;
 				episode->overview = NULL;
 				episode->series = NULL;
