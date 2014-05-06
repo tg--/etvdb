@@ -72,14 +72,14 @@ EAPI Eina_List *etvdb_episodes_get(Series *s)
  *
  * @ingroup Episodes
  */
-EAPI Episode *etvdb_episode_by_id_get(const char *id, Series *s)
+EAPI Episode *etvdb_episode_by_id_get(const char *id, Series **s)
 {
 	char uri[URI_MAX];
 	Download xml;
 	Episode_Parser_Data pdata;
 	Episode *e = NULL;
 
-	pdata.s = s;
+	pdata.s = *s;
 	pdata.list = NULL;
 
 	snprintf(uri, URI_MAX, TVDB_API_URI"/%s/episodes/%s/%s.xml", etvdb_api_key, id, etvdb_language);
@@ -97,6 +97,9 @@ EAPI Episode *etvdb_episode_by_id_get(const char *id, Series *s)
 	 * should it be more (which would be a TVDB bug), its a memleak */
 	e = eina_list_data_get(pdata.list);
 	pdata.list = eina_list_remove_list(pdata.list, pdata.list);
+
+	if (s)
+		*s = pdata.s;
 
 	return e;
 }
