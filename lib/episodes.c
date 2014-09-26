@@ -58,6 +58,60 @@ EAPI Eina_List *etvdb_episodes_get(Series *s)
 }
 
 /**
+ * @brief Get episode data for a specific date
+ *
+ * This function will retrieve the data for one episode,
+ * that first aired at a specific date.
+ *
+ * It will NOT fetch any data, so the passed Series structure has to be fully initialized,
+ * e.g. with @ref etvdb_series_by_id_get.
+ *
+ * @param s Fully initialized TVDB Series structure.
+ * @param date a ISO 8601 date string, e.g. "2014-05-25"
+ *
+ * @return a fully initialized Episode structure on success,
+ * @return NULL on failure.
+ *
+ * @ingroup Episodes
+ */
+EAPI Episode *etvdb_episode_by_date_get(Series *s, const char *date)
+{
+	Eina_List *l, *ll, *sl;
+	Episode *e = NULL;
+
+	if (!s->id) {
+		ERR("Passed series data is not valid.");
+		return NULL;
+	}
+
+	if (!s->seasons)
+
+	EINA_LIST_FOREACH(s->seasons, l, sl) {
+		EINA_LIST_FOREACH(sl, ll, e) {
+			if (!strncmp(e->firstaired, date, sizeof("2000-01-01")))
+				break;
+			else
+				e = NULL;
+		}
+
+		if (e)
+			break;
+	}
+
+	/* also search in special episodes */
+	if (!e) {
+		EINA_LIST_FOREACH(s->specials, l, e) {
+			if (!strncmp(e->firstaired, date, sizeof("2000-01-01")))
+				break;
+			else
+				e = NULL;
+		}
+	}
+
+	return e;
+}
+
+/**
  * @brief Get episode data for one specific Episode
  *
  * This function will retreive the data for one episode,
