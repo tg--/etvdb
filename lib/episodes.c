@@ -84,8 +84,6 @@ EAPI Episode *etvdb_episode_by_date_get(Series *s, const char *date)
 		return NULL;
 	}
 
-	if (!s->seasons)
-
 	EINA_LIST_FOREACH(s->seasons, l, sl) {
 		EINA_LIST_FOREACH(sl, ll, e) {
 			if (!strncmp(e->firstaired, date, sizeof("2000-01-01")))
