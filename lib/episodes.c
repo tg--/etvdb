@@ -88,12 +88,12 @@ EAPI Episode *etvdb_episode_by_date_get(Series *s, const char *date)
 		EINA_LIST_FOREACH(sl, ll, e) {
 			if (!e) {
 				DBG("No episodes found!");
-				e = NULL;
+				break;
 			}
 
 			if (!e->firstaired) {
 				DBG("Episode %s has no date in TVDB.", e->name);
-				e = NULL;
+				break;
 			}
 
 			DBG("Checking episode %s with date %s for match with %s", e->name, e->firstaired, date);
