@@ -91,6 +91,11 @@ EAPI Episode *etvdb_episode_by_date_get(Series *s, const char *date)
 				break;
 			}
 
+			if (!e->firstaired) {
+				DBG("Episode %s has no date in TVDB.", e->name);
+				break;
+			}
+
 			DBG("Checking episode %s with date %s for match with %s", e->name, e->firstaired, date);
 			if (!strncmp(e->firstaired, date, sizeof("2000-01-01"))) {
 				DBG("Episode %s aired on %s", e->name, date);
@@ -108,6 +113,11 @@ EAPI Episode *etvdb_episode_by_date_get(Series *s, const char *date)
 		EINA_LIST_FOREACH(s->specials, l, e) {
 			if (!e) {
 				DBG("No special episodes! No match in regular episodes.");
+				break;
+			}
+
+			if (!e->firstaired) {
+				DBG("Episode %s has no date in TVDB.", e->name);
 				break;
 			}
 
