@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 project(ETVDB)
-set(PACKAGE_VERSION 0.3.0)
+set(PACKAGE_VERSION 0.4.1)
 set(PACKAGE ${CMAKE_PROJECT_NAME})
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2 -std=gnu99")
