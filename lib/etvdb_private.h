@@ -33,6 +33,7 @@
 	dl.data = malloc(1); \
 	dl.len = 0; \
 	curl_easy_setopt(curl_handle, CURLOPT_URL, uri); \
+	curl_easy_setopt(curl_handle, CURLOPT_TIMEOUT, 60); \
 	curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, _dl_to_mem_cb); \
 	curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)&dl); \
 	if (curl_easy_perform(curl_handle))
