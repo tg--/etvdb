@@ -58,6 +58,66 @@ EAPI Eina_List *etvdb_episodes_get(Series *s)
 }
 
 /**
+ * @brief Get the Episode that airs next
+ *
+ * This function returns the Episode that airs next
+ * after today or a given date.
+ *
+ * The date string has to be in an ISO 8601 format and contain only the date.
+ * Behaviour for any other input is undefined.
+ * Example: 2013-03-28
+ *
+ * @param s Series data
+ * @param date a string containing an ISO 8601 date or NULL for today
+ *
+ * @return the Episode that airs next after today or a given date
+ * @return NULL on failure
+ *
+ * @ingroup Episodes
+ */
+EAPI Episode *etvdb_episode_next_airs_get(Series *s, char *date)
+{
+	char *tstr;
+	struct tm *ltime;
+	time_t t;
+	Eina_List *lseasons, *lepisodes, *l, *ll;
+	Episode *e = NULL;
+
+	tstr = malloc(sizeof("2013-03-28"));
+
+	if (date) {
+		DBG("Requsted Date: %s", date);
+		tstr = strncpy(tstr, date, sizeof("2013-03-28") - 1);
+	} else {
+		time(&t);
+		ltime = localtime(&t);
+		strftime(tstr, sizeof("2013-03-28"), "%F", ltime);
+	}
+
+	DBG("Selected Date: %s", tstr);
+
+	/* While walking the episodes from old to new would be simpler, the fact
+	 * that the number of unaired episodes is usually lower than the aired on
+	 * makes this faster. */
+	lseasons = eina_list_last(s->seasons);
+	EINA_LIST_REVERSE_FOREACH(lseasons, l, lepisodes) {
+		EINA_LIST_REVERSE_FOREACH(lepisodes, ll, e) {
+			if (e->firstaired) {
+				if (strcmp(e->firstaired, tstr) >= 0) {
+					e = eina_list_data_get(eina_list_next(lepisodes));
+					DBG("Next Episode airs on: %s", e->firstaired);
+					goto END;
+				}
+			}
+		}
+	}
+
+END:
+	free(tstr);
+	return e;
+}
+
+/**
  * @brief Get episode data for a specific date
  *
  * This function will retrieve the data for one episode,
