@@ -96,19 +96,11 @@ EAPI Episode *etvdb_episode_airs_next_get(Series *s, char *date)
 
 	DBG("Selected Date: %s", tstr);
 
-	/* While walking the episodes from old to new would be simpler, the fact
-	 * that the number of unaired episodes is usually lower than the aired on
-	 * makes this faster. */
-	lseasons = eina_list_last(s->seasons);
-	EINA_LIST_REVERSE_FOREACH(lseasons, l, lepisodes) {
-		EINA_LIST_REVERSE_FOREACH(lepisodes, ll, e) {
-			if (e->firstaired) {
-				if (strcmp(e->firstaired, tstr) >= 0) {
-					e = eina_list_data_get(eina_list_next(lepisodes));
-					DBG("Next Episode airs on: %s", e->firstaired);
-					goto END;
-				}
-			}
+	lseasons = s->seasons;
+	EINA_LIST_FOREACH(lseasons, l, lepisodes) {
+		EINA_LIST_FOREACH(lepisodes, ll, e) {
+			if (e->firstaired && (strcmp(e->firstaired, tstr) > 0))
+				goto END;
 		}
 	}
 
