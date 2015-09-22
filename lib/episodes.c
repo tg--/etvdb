@@ -299,15 +299,15 @@ EAPI Episode *etvdb_episode_latest_aired_get(Series *s, char *date)
 	Eina_List *lseasons, *lepisodes, *l, *ll;
 	Episode *e = NULL;
 
-	tstr = malloc(11);
+	tstr = malloc(sizeof("2013-03-28"));
 
 	if (date) {
 		DBG("Requsted Date: %s", date);
-		tstr = strncpy(tstr, date, 10);
+		tstr = strncpy(tstr, date, sizeof("2013-03-28") - 1);
 	} else {
 		time(&t);
 		ltime = localtime(&t);
-		strftime(tstr, 11, "%F", ltime);
+		strftime(tstr, sizeof("2013-03-28"), "%F", ltime);
 	}
 
 	DBG("Selected Date: %s", tstr);
