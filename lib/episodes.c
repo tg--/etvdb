@@ -75,7 +75,7 @@ EAPI Eina_List *etvdb_episodes_get(Series *s)
  *
  * @ingroup Episodes
  */
-EAPI Episode *etvdb_episode_next_airs_get(Series *s, char *date)
+EAPI Episode *etvdb_episode_airs_next_get(Series *s, char *date)
 {
 	char *tstr;
 	struct tm *ltime;
