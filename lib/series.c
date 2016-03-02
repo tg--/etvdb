@@ -170,6 +170,11 @@ EAPI Eina_List *etvdb_series_find(const char *name)
  * by the TVDB download speed).
  * Only use it when more than a few specific episode records are required.
  *
+ * Since you might want to populate a Series that already contains episode data,
+ * for example after using etvdb_episode_by_id_get(), this function will dump
+ * and free all existing associated episodes.
+ * Be aware of any pointers left to existing episodes before using it!
+ *
  * @param s pointer to Series structure.
  *
  * @return EINA_TRUE on success
@@ -184,6 +189,15 @@ EAPI Eina_Bool etvdb_series_populate(Series *s)
 {
 	Eina_List *all, *l, *lnex, *sl;
 	Episode *e;
+
+	/* remove all existing list nodes to avoid corrupt data */
+	EINA_LIST_FREE(s->specials, e)
+		etvdb_episode_free(e);
+
+	EINA_LIST_FOREACH_SAFE(s->seasons, l, lnex, sl) {
+		EINA_LIST_FREE(sl, e);
+		s->seasons = eina_list_remove_list(s->seasons, l);
+	}
 
 	if (!s->id) {
 		ERR("No ID for the selected Series found.");
