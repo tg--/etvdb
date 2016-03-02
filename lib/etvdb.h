@@ -93,7 +93,7 @@ typedef struct _etvdb_series {
 	char *imdb_id; /**< IMDB Series ID */
 	char *name; /**< Series Name */
 	char *overview; /**< Series Description */
-	int runtime; /**< Typical Episode Runtime */
+	uint16_t runtime; /**< Typical Episode Runtime */
 	Eina_List *seasons; /**< List containing 1 list per season */
 	Eina_List *specials; /**< List containing special episodes */
 } Series;
@@ -109,8 +109,8 @@ typedef struct _etvdb_episode {
 	char *name; /**< Episode Name */
 	char *overview; /**< Episode Description */
 	char *firstaired; /**< Episode aired first at this date */
-	int number; /**< Episode Number in Season */
-	int season; /**< Season Number in Series */
+	uint16_t number; /**< Episode Number in Season */
+	uint16_t season; /**< Season Number in Series */
 	Series *series; /**< parent Series structure */
 } Episode;
 
