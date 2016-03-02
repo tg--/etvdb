@@ -2,7 +2,7 @@
 
 /* internal functions */
 static Eina_Bool _parse_episodes_cb(void *data, Eina_Simple_XML_Type type, const char *content,
-		unsigned offset, unsigned length);
+		unsigned offset UNUSED, unsigned length);
 
 /**
  * @brief Overall Episode Functions
@@ -385,7 +385,7 @@ END:
 
 /* this callback parses the episodes of tvdb's all document and populates a Series structure */
 static Eina_Bool _parse_episodes_cb(void *data, Eina_Simple_XML_Type type, const char *content,
-		unsigned offset, unsigned length)
+		unsigned offset UNUSED, unsigned length)
 {
 	char buf[length + 1];
 	enum nname { UNKNOWN, ID, NAME, IMDB, OVERVIEW, FIRSTAIRED, NUMBER, SEASON, SERIES };

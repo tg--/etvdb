@@ -7,6 +7,10 @@
 #include "entities.h"
 #include "etvdb.h"
 
+#ifndef UNUSED
+  #define UNUSED __attribute__((__unused__))
+#endif
+
 #define CRIT(...) EINA_LOG_DOM_CRIT(_etvdb_log_dom, __VA_ARGS__)
 #define ERR(...)  EINA_LOG_DOM_ERR(_etvdb_log_dom, __VA_ARGS__)
 #define INFO(...) EINA_LOG_DOM_INFO(_etvdb_log_dom, __VA_ARGS__)

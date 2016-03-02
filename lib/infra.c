@@ -2,9 +2,9 @@
 
 /* internal functions */
 static Eina_Bool _parse_time_cb(void *data, Eina_Simple_XML_Type type, const char *content,
-		unsigned offset, unsigned length);
+		unsigned offset UNUSED, unsigned length);
 static Eina_Bool _parse_lang_cb(void *data, Eina_Simple_XML_Type type, const char *content,
-		unsigned offset, unsigned length);
+		unsigned offset UNUSED, unsigned length);
 static void _hash_free_cb(void *data);
 
 /**
@@ -162,7 +162,7 @@ end:
 
 /* this callback parses TVDBs languages.xml format and writes the data in a hashtable */
 static Eina_Bool _parse_lang_cb(void *data, Eina_Simple_XML_Type type, const char *content,
-		unsigned offset, unsigned length)
+		unsigned offset UNUSED, unsigned length)
 {
 	char buf[length + 1];
 	char itoa[sizeof(_xml_count) + 1];
@@ -243,7 +243,7 @@ static Eina_Bool _parse_lang_cb(void *data, Eina_Simple_XML_Type type, const cha
 
 /* this callback parses and stores TVDBs server time */
 static Eina_Bool _parse_time_cb(void *data, Eina_Simple_XML_Type type, const char *content,
-		unsigned offset, unsigned length)
+		unsigned offset UNUSED, unsigned length)
 {
 	char buf[length + 1];
 

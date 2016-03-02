@@ -2,7 +2,7 @@
 
 /* internal functions */
 static Eina_Bool _parse_series_cb(void *data, Eina_Simple_XML_Type type, const char *content,
-		unsigned offset, unsigned length);
+		unsigned offset UNUSED, unsigned length);
 
 /**
  * @brief Overall Series Functions
@@ -275,7 +275,7 @@ EAPI int etvdb_series_episodes_count(Series *s, int season)
 
 /* this callback parses found series and puts them in a list */
 static Eina_Bool _parse_series_cb(void *data, Eina_Simple_XML_Type type, const char *content,
-		unsigned offset, unsigned length)
+		unsigned offset UNUSED, unsigned length)
 {
 	char buf[length + 1];
 	enum nname { UNKNOWN, ID, NAME, IMDB, OVERVIEW, RUNTIME };
