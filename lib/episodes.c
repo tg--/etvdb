@@ -190,6 +190,11 @@ EAPI Episode *etvdb_episode_by_date_get(Series *s, const char *date)
  * This function will retreive the data for one episode,
  * according to its episode ID.
  *
+ * You may notice that unlike all other episode functions this one
+ * uses the Series argument differently. This is intentional, because this function
+ * is unique in that it can initialize a Series structure on it's own, since the
+ * TVDB Episode ID does not require to know the Series beforehand.
+ *
  * @param id TVDB ID of a episode
  *
  * @param s TVDB Series structure. If necessary it will be initialized. May NOT be NULL!
