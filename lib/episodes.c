@@ -192,7 +192,7 @@ EAPI Episode *etvdb_episode_by_date_get(Series *s, const char *date)
  *
  * @param id TVDB ID of a episode
  *
- * @param s TVDB Series structure. If necessary it will be initialized.
+ * @param s TVDB Series structure. If necessary it will be initialized. May NOT be NULL!
  *
  * @return a Episode structure on success,
  * @return NULL on failure.
@@ -225,8 +225,7 @@ EAPI Episode *etvdb_episode_by_id_get(const char *id, Series **s)
 	e = eina_list_data_get(pdata.list);
 	pdata.list = eina_list_remove_list(pdata.list, pdata.list);
 
-	if (s)
-		*s = pdata.s;
+	*s = pdata.s;
 
 	return e;
 }
