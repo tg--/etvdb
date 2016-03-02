@@ -11,7 +11,7 @@ set(DATADIR "share/etvdb")
 ## build with -D DEBUG=ON
 option(DEBUG debug OFF)
 if(DEBUG)
-	add_definitions(-DDEBUG -g -Wall -O0)
+	add_definitions(-DDEBUG -g -Wall -Wextra -O0)
 else()
 	add_definitions(-DDATA_LANG_FILE_XML="${CMAKE_INSTALL_PREFIX}/${DATADIR}/languages.xml")
 endif(DEBUG)
