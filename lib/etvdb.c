@@ -52,8 +52,8 @@ EAPI Eina_Bool etvdb_init(char *api_key)
 	if (!api_key) {
 		strcpy(etvdb_api_key, ETVDB_API_KEY);
 		INFO("Using ETVDBs own API key.");
-	} else if (strnlen(api_key, sizeof(etvdb_api_key)) == 16) {
-		memcpy(etvdb_api_key, api_key, sizeof(api_key) / sizeof(api_key[0]));
+	} else if (strlen(api_key) == strlen(etvdb_api_key)) {
+		strcpy(etvdb_api_key, api_key);
 		INFO("Using project specific API key.");
 	} else {
 		CRIT("Invalid API key format.");
