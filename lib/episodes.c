@@ -204,7 +204,7 @@ EAPI Episode *etvdb_episode_by_date_get(Series *s, const char *date)
  *
  * @ingroup Episodes
  */
-EAPI Episode *etvdb_episode_by_id_get(const char *id, Series **s)
+EAPI Episode *etvdb_episode_by_id_get(uint32_t id, Series **s)
 {
 	char uri[URI_MAX];
 	Download xml;
@@ -214,7 +214,7 @@ EAPI Episode *etvdb_episode_by_id_get(const char *id, Series **s)
 	pdata.s = *s;
 	pdata.list = NULL;
 
-	snprintf(uri, URI_MAX, TVDB_API_URI"/%s/episodes/%s/%s.xml", etvdb_api_key, id, etvdb_language);
+	snprintf(uri, URI_MAX, TVDB_API_URI"/%s/episodes/%"PRIu32"/%s.xml", etvdb_api_key, id, etvdb_language);
 
 	CURL_XML_DL_MEM(xml, uri)
 		ERR("Couldn't get episode data from server.");
@@ -297,7 +297,6 @@ EAPI Episode *etvdb_episode_by_number_get(Series *s, int season, int episode)
  */
 EAPI void etvdb_episode_free(Episode *e)
 {
-	free(e->id);
 	free(e->imdb_id);
 	free(e->name);
 	free(e->overview);
@@ -408,7 +407,7 @@ static Eina_Bool _parse_episodes_cb(void *data, Eina_Simple_XML_Type type, const
 			if (!TAGCMP("Episode", content)) {
 				_xml_depth++;
 				episode = malloc(sizeof(Episode));
-				episode->id = NULL;
+				episode->id = 0;
 				episode->imdb_id = NULL;
 				episode->firstaired = NULL;
 				episode->name = NULL;
@@ -453,9 +452,9 @@ static Eina_Bool _parse_episodes_cb(void *data, Eina_Simple_XML_Type type, const
 
 			switch (_xml_sibling) {
 			case ID:
-				episode->id = malloc(length + 1);
-				MEM2STR(episode->id, content, length);
-				DBG("Found ID: %s", episode->id);
+				MEM2STR(buf, content, length);
+				episode->id = atoi(buf);
+				DBG("Found ID: %"PRIu32, episode->id);
 				break;
 			case NAME:
 				episode->name = malloc(length + 1);

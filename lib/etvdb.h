@@ -104,7 +104,7 @@ typedef struct _etvdb_series {
  * it is roughly comparable to TVDB's Base Series Record.
  */
 typedef struct _etvdb_episode {
-	char *id; /**< TVDB ID */
+	uint32_t id; /**< TVDB ID */
 	char *imdb_id; /**< IMDB Episode ID */
 	char *name; /**< Episode Name */
 	char *overview; /**< Episode Description */
@@ -135,7 +135,7 @@ EAPI Eina_Bool      etvdb_series_populate(Series *s);
 EAPI Eina_List     *etvdb_episodes_get(Series *s);
 EAPI Episode       *etvdb_episode_airs_next_get(Series *s, char *timestr);
 EAPI Episode       *etvdb_episode_by_date_get(Series *s, const char *date);
-EAPI Episode       *etvdb_episode_by_id_get(const char *id, Series **s);
+EAPI Episode       *etvdb_episode_by_id_get(uint32_t id, Series **s);
 EAPI Episode       *etvdb_episode_by_number_get(Series *s, int season, int episode);
 EAPI void           etvdb_episode_free(Episode *e);
 EAPI Episode       *etvdb_episode_from_series_get(Series *s, int season, int episode);
