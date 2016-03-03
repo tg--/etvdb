@@ -343,7 +343,7 @@ static Eina_Bool _parse_series_cb(void *data, Eina_Simple_XML_Type type, const c
 			switch (_xml_sibling) {
 			case ID:
 				MEM2STR(buf, content, length);
-				series->id = atoi(buf);
+				sscanf(buf, "%"SCNu32, &series->id);
 				DBG("Found ID: %"PRIu32, series->id);
 				break;
 			case NAME:
@@ -365,7 +365,7 @@ static Eina_Bool _parse_series_cb(void *data, Eina_Simple_XML_Type type, const c
 				break;
 			case RUNTIME:
 				MEM2STR(buf, content, length);
-				series->runtime = atoi(buf);
+				sscanf(buf, "%"SCNu16, &series->runtime);
 				DBG("Found Runtime: %"PRIu16, series->runtime);
 				break;
 			}

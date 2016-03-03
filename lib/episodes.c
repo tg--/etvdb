@@ -453,7 +453,7 @@ static Eina_Bool _parse_episodes_cb(void *data, Eina_Simple_XML_Type type, const
 			switch (_xml_sibling) {
 			case ID:
 				MEM2STR(buf, content, length);
-				episode->id = atoi(buf);
+				sscanf(buf, "%"SCNu32, &episode->id);
 				DBG("Found ID: %"PRIu32, episode->id);
 				break;
 			case NAME:
@@ -480,12 +480,12 @@ static Eina_Bool _parse_episodes_cb(void *data, Eina_Simple_XML_Type type, const
 				break;
 			case NUMBER:
 				MEM2STR(buf, content, length);
-				episode->number = atoi(buf);
+				sscanf(buf, "%"SCNu16, &episode->number);
 				DBG("Found Episode Number: %d", episode->number);
 				break;
 			case SEASON:
 				MEM2STR(buf, content, length);
-				episode->season = atoi(buf);
+				sscanf(buf, "%"SCNu16, &episode->season);
 				DBG("Found Season Number: %d", episode->season);
 				break;
 			case SERIES:
@@ -494,7 +494,8 @@ static Eina_Bool _parse_episodes_cb(void *data, Eina_Simple_XML_Type type, const
 					episode->series = pdata->s;
 				} else {
 					MEM2STR(buf, content, length);
-					pdata->s = episode->series = etvdb_series_by_id_get(atoi(buf));
+					pdata->s = episode->series = etvdb_series_by_id_get(
+							sscanf(buf, "%"SCNu32, &episode->series->id));
 					DBG("Found Series ID: %"PRIu32, episode->series->id);
 				}
 				break;
