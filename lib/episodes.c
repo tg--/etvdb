@@ -43,7 +43,7 @@ EAPI Eina_List *etvdb_episodes_get(Series *s)
 		return NULL;
 	}
 
-	snprintf(uri, URI_MAX, TVDB_API_URI"/%s/series/%s/all/%s.xml", etvdb_api_key, s->id, etvdb_language);
+	snprintf(uri, URI_MAX, TVDB_API_URI"/%s/series/%"PRIu32"/all/%s.xml", etvdb_api_key, s->id, etvdb_language);
 
 	CURL_XML_DL_MEM(xml, uri)
 		ERR("Couldn't get series data from server.");
@@ -265,7 +265,7 @@ EAPI Episode *etvdb_episode_by_number_get(Series *s, int season, int episode)
 		return NULL;
 	}
 
-	snprintf(uri, URI_MAX, TVDB_API_URI"/%s/series/%s/default/%d/%d/%s.xml",
+	snprintf(uri, URI_MAX, TVDB_API_URI"/%s/series/%"PRIu32"/default/%d/%d/%s.xml",
 			etvdb_api_key, s->id, season, episode, etvdb_language);
 
 	CURL_XML_DL_MEM(xml, uri)
@@ -495,8 +495,8 @@ static Eina_Bool _parse_episodes_cb(void *data, Eina_Simple_XML_Type type, const
 					episode->series = pdata->s;
 				} else {
 					MEM2STR(buf, content, length);
-					pdata->s = episode->series = etvdb_series_by_id_get(buf);
-					DBG("Found Series ID: %s", episode->series->id);
+					pdata->s = episode->series = etvdb_series_by_id_get(atoi(buf));
+					DBG("Found Series ID: %"PRIu32, episode->series->id);
 				}
 				break;
 			}

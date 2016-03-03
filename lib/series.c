@@ -1,4 +1,5 @@
 #include "etvdb_private.h"
+#include <inttypes.h>
 
 /* internal functions */
 static Eina_Bool _parse_series_cb(void *data, Eina_Simple_XML_Type type, const char *content,
@@ -30,14 +31,14 @@ static Eina_Bool _parse_series_cb(void *data, Eina_Simple_XML_Type type, const c
  *
  * @ingroup Series
  */
-EAPI Series *etvdb_series_by_id_get(const char *id)
+EAPI Series *etvdb_series_by_id_get(uint32_t id)
 {
 	char uri[URI_MAX];
 	Download xml;
 	Eina_List *list = NULL;
 	Series *s = NULL;
 
-	snprintf(uri, URI_MAX, TVDB_API_URI"/%s/series/%s/%s.xml",
+	snprintf(uri, URI_MAX, TVDB_API_URI"/%s/series/%"PRIu32"/%s.xml",
 			etvdb_api_key, id, etvdb_language);
 
 	CURL_XML_DL_MEM(xml, uri)
@@ -77,7 +78,6 @@ EAPI Series *etvdb_series_by_id_get(const char *id)
 EAPI Series *etvdb_series_from_list_get(Eina_List *list, int number)
 {
 	int count;
-	char *id;
 	Series *s;
 
 	if (number < 0) {
@@ -92,9 +92,7 @@ EAPI Series *etvdb_series_from_list_get(Eina_List *list, int number)
 	}
 
 	s = eina_list_nth(list, number);
-	id = strdup(s->id);
-	s = etvdb_series_by_id_get(id);
-	free(id);
+	s = etvdb_series_by_id_get(s->id);
 
 	return s;
 }
@@ -206,7 +204,7 @@ EAPI Eina_Bool etvdb_series_populate(Series *s)
 
 	all = etvdb_episodes_get(s);
 	if (!all) {
-		ERR("Couldn't get Episodes for Series %s", s->id);
+		ERR("Couldn't get Episodes for Series %"PRIu32, s->id);
 		return EINA_FALSE;
 	}
 
@@ -257,7 +255,6 @@ EAPI void etvdb_series_free(Series *s)
 	EINA_LIST_FREE(s->specials, e)
 		etvdb_episode_free(e);
 
-	free(s->id);
 	free(s->imdb_id);
 	free(s->name);
 	free(s->overview);
@@ -307,7 +304,7 @@ static Eina_Bool _parse_series_cb(void *data, Eina_Simple_XML_Type type, const c
 			if (!TAGCMP("Series", content)) {
 				_xml_depth++;
 				series = malloc(sizeof(Series));
-				series->id = NULL;
+				series->id = 0;
 				series->imdb_id = NULL;
 				series->name = NULL;
 				series->overview = NULL;
@@ -345,9 +342,9 @@ static Eina_Bool _parse_series_cb(void *data, Eina_Simple_XML_Type type, const c
 
 			switch (_xml_sibling) {
 			case ID:
-				series->id = malloc(length + 1);
-				MEM2STR(series->id, content, length);
-				DBG("Found ID: %s", series->id);
+				MEM2STR(buf, content, length);
+				series->id = atoi(buf);
+				DBG("Found ID: %"PRIu32, series->id);
 				break;
 			case NAME:
 				series->name = malloc(length + 1);
@@ -369,7 +366,7 @@ static Eina_Bool _parse_series_cb(void *data, Eina_Simple_XML_Type type, const c
 			case RUNTIME:
 				MEM2STR(buf, content, length);
 				series->runtime = atoi(buf);
-				DBG("Found Runtime: %d", series->runtime);
+				DBG("Found Runtime: %"PRIu16, series->runtime);
 				break;
 			}
 		}
