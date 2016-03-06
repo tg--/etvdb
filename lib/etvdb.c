@@ -24,7 +24,7 @@
  * This function initializes etvdb and its dependencies.
  * It does not depend on any other init routine and has to be called
  * before any etvdb function is called.
- * You need to check its return value, on failure the behaviour of 
+ * You need to check its return value, on failure the behaviour of
  * all functions is undefined.
  *
  * @param api_key Your applications API key as given out by thetvdb.com.
@@ -43,7 +43,7 @@ EAPI Eina_Bool etvdb_init(char *api_key)
 		return 0;
 	}
 
-	_etvdb_log_dom = eina_log_domain_register("etvdb", EINA_COLOR_CYAN); 
+	_etvdb_log_dom = eina_log_domain_register("etvdb", EINA_COLOR_CYAN);
 	if (_etvdb_log_dom < 0) {
 		EINA_LOG_CRIT("Eina couldn't initialize a logging domain for: etvdb.");
 		return EINA_FALSE;
