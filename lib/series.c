@@ -267,10 +267,10 @@ EAPI void etvdb_series_free(Series *s)
  * This functions counts the number of episodes of one season
  * in a Series structure.
  *
- * @param s pointer to Series static
- * @param season number of the season
+ * @param s pointer to Series structure
+ * @param season number
  *
- * @return number of seasons >=1 on success
+ * @return number of episodes >= 1 on success
  * @return 0 on error or empty structure
  *
  * @ingroup Series
