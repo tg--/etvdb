@@ -27,6 +27,9 @@
  * You need to check its return value, on failure the behaviour of 
  * all functions is undefined.
  *
+ * @param api_key Your applications API key as given out by thetvdb.com.
+ * Can be NULL to use etvdb's API key for applications not creating much traffic.
+ *
  * @return EINA_TRUE on success, EINA_FALSE on failure.
  *
  * @see etvdb_shutdown().
