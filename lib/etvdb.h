@@ -141,6 +141,7 @@ EAPI Episode       *etvdb_episode_by_number_get(Series *s, int season, int episo
 EAPI void           etvdb_episode_free(Episode *e);
 EAPI Episode       *etvdb_episode_from_series_get(Series *s, int season, int episode);
 EAPI Episode       *etvdb_episode_latest_aired_get(Series *s, char *timestr);
+EAPI Episode       *etvdb_episode_new();
 /**
  * @}
  */

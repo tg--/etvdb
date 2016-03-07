@@ -386,6 +386,34 @@ END:
 	free(tstr);
 	return e;
 }
+
+/**
+ * @brief Initialize new Episode structure
+ *
+ * This function will set up a new Episode structure,
+ * and take care of all details, so you don't have to.
+ *
+ * @see etvdb_episode_free()
+ *
+ * @returns the pointer to an allocated Episode structure on success,
+ * or NULL on failure.
+ */
+EAPI Episode *etvdb_episode_new()
+{
+	Episode *e = NULL;
+
+	e = malloc(sizeof(Episode));
+	e->id = 0;
+	e->imdb_id = NULL;
+	e->firstaired = NULL;
+	e->name = NULL;
+	e->overview = NULL;
+	e->series = NULL;
+	e->number = 0;
+	e->season = 0;
+
+	return e;
+}
 /**
  * @}
  */
@@ -409,15 +437,7 @@ static Eina_Bool _parse_episodes_cb(void *data, Eina_Simple_XML_Type type, const
 		case 1:
 			if (!TAGCMP("Episode", content)) {
 				_xml_depth++;
-				episode = malloc(sizeof(Episode));
-				episode->id = 0;
-				episode->imdb_id = NULL;
-				episode->firstaired = NULL;
-				episode->name = NULL;
-				episode->overview = NULL;
-				episode->series = NULL;
-				episode->number = 0;
-				episode->season = 0;
+				episode = etvdb_episode_new();
 				pdata->list = eina_list_append(pdata->list, episode);
 			}
 			break;
