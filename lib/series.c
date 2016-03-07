@@ -35,8 +35,11 @@ EAPI Series *etvdb_series_by_id_get(uint32_t id)
 {
 	char uri[URI_MAX];
 	Download xml;
-	Eina_List *list = NULL;
 	Series *s = NULL;
+	Parser_Data pdata;
+
+	pdata.s = NULL;
+	pdata.data = NULL;
 
 	snprintf(uri, URI_MAX, TVDB_API_URI"/%s/series/%"PRIu32"/%s.xml",
 			etvdb_api_key, id, etvdb_language);
@@ -44,16 +47,16 @@ EAPI Series *etvdb_series_by_id_get(uint32_t id)
 	CURL_XML_DL_MEM(xml, uri)
 		ERR("Couldn't get series data from server.");
 
-	_xml_count = _xml_depth = _xml_sibling = 0;
-	if (!eina_simple_xml_parse(xml.data, xml.len, EINA_TRUE, _parse_series_cb, &list))
+	pdata.xml_count = pdata.xml_depth = pdata.xml_sibling = 0;
+	if (!eina_simple_xml_parse(xml.data, xml.len, EINA_TRUE, _parse_series_cb, &pdata))
 		CRIT("Parsing series data failed. If it happens again, please report a bug.");
 
 	free(xml.data);
 
 	/* we assume that only a single episode is in the list
 	 * should it be more (which would be a TVDB bug), its a memleak */
-	s = eina_list_data_get(list);
-	list = eina_list_remove_list(list, list);
+	s = eina_list_data_get(pdata.data);
+	pdata.data = eina_list_remove_list(pdata.data, pdata.data);
 
 	return s;
 }
@@ -122,7 +125,10 @@ EAPI Eina_List *etvdb_series_find(const char *name)
 	char *buf;
 	char uri[URI_MAX];
 	Download xml;
-	Eina_List *list = NULL;
+	Parser_Data pdata;
+
+	pdata.s = NULL;
+	pdata.data = NULL;
 
 	if (!name)
 		return NULL;
@@ -146,13 +152,13 @@ EAPI Eina_List *etvdb_series_find(const char *name)
 	CURL_XML_DL_MEM(xml, uri)
 		ERR("Couldn't get series data from server.");
 
-	_xml_count = _xml_depth = _xml_sibling = 0;
-	if (!eina_simple_xml_parse(xml.data, xml.len, EINA_TRUE, _parse_series_cb, &list))
+	pdata.xml_count = pdata.xml_depth = pdata.xml_sibling = 0;
+	if (!eina_simple_xml_parse(xml.data, xml.len, EINA_TRUE, _parse_series_cb, &pdata))
 		CRIT("Parsing Series data failed. If it happens again, please report a bug.");
 
 	free(xml.data);
 
-	return list;
+	return pdata.data;
 }
 
 /**
@@ -317,50 +323,50 @@ static Eina_Bool _parse_series_cb(void *data, Eina_Simple_XML_Type type, const c
 {
 	char buf[length + 1];
 	enum nname { UNKNOWN, ID, NAME, IMDB, OVERVIEW, RUNTIME };
-	Series *series;
-	Eina_List **list = data;
+	Parser_Data *pdata = data;
+	Series *series = pdata->s;
 
 	switch (type) {
 	case EINA_SIMPLE_XML_OPEN:
-		switch (_xml_depth) {
+		switch (pdata->xml_depth) {
 		case 0:
 			if (!TAGCMP("Data", content))
-				_xml_depth++;
+				pdata->xml_depth++;
 			break;
 		case 1:
 			if (!TAGCMP("Series", content)) {
-				_xml_depth++;
+				pdata->xml_depth++;
 				series = etvdb_series_new();
-				*list = eina_list_append(*list, series);
+				pdata->data= eina_list_append(pdata->data, series);
 			}
 			break;
 		case 2:
 			if (!TAGCMP("id", content))
-				_xml_sibling = ID;
+				pdata->xml_sibling = ID;
 			else if (!TAGCMP("SeriesName", content))
-				_xml_sibling = NAME;
+				pdata->xml_sibling = NAME;
 			else if (!TAGCMP("IMDB_ID", content))
-				_xml_sibling = IMDB;
+				pdata->xml_sibling = IMDB;
 			else if (!TAGCMP("Overview", content))
-				_xml_sibling = OVERVIEW;
+				pdata->xml_sibling = OVERVIEW;
 			else if (!TAGCMP("Runtime", content))
-				_xml_sibling = RUNTIME;
+				pdata->xml_sibling = RUNTIME;
 			else
-				_xml_sibling = UNKNOWN;
+				pdata->xml_sibling = UNKNOWN;
 			break;
 		}
 		break;
 	case EINA_SIMPLE_XML_CLOSE:
 		if(!TAGCMP("Series", content)) {
-			_xml_count++;
-			_xml_depth--;
+			pdata->xml_count++;
+			pdata->xml_depth--;
 		}
 		break;
 	case EINA_SIMPLE_XML_DATA:
-		if (_xml_depth == 2) {
-			series = eina_list_nth(*list, _xml_count);
+		if (pdata->xml_depth == 2) {
+			series = eina_list_nth(pdata->data, pdata->xml_count);
 
-			switch (_xml_sibling) {
+			switch (pdata->xml_sibling) {
 			case ID:
 				MEM2STR(buf, content, length);
 				sscanf(buf, "%"SCNu32, &series->id);

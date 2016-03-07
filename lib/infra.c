@@ -42,6 +42,7 @@ EAPI Eina_Hash *etvdb_languages_get(const char *lang_file_path)
 	Download xml;
 	Eina_File *file = NULL;
 	Eina_Hash *hash = NULL;
+	Parser_Data pdata;
 
 	hash = eina_hash_string_superfast_new(_hash_free_cb);
 
@@ -75,8 +76,9 @@ EAPI Eina_Hash *etvdb_languages_get(const char *lang_file_path)
 		}
 	}
 
-	_xml_count = _xml_depth = _xml_sibling = 0;
-	if (!eina_simple_xml_parse(xml.data, xml.len, EINA_TRUE, _parse_lang_cb, hash))
+	pdata.xml_count = pdata.xml_depth = pdata.xml_sibling = 0;
+	pdata.data = hash;
+	if (!eina_simple_xml_parse(xml.data, xml.len, EINA_TRUE, _parse_lang_cb, &pdata))
 		CRIT("Parsing of languages.xml failed. Probably invalid XML file.");
 
 	if (file)
@@ -135,6 +137,7 @@ EAPI time_t etvdb_server_time_get(void)
 {
 	time_t server_time = 0;
 	Download xml;
+	Parser_Data pdata;
 
 	CURL_XML_DL_MEM(xml, TVDB_API_URI"/Updates.php?type=none") {
 		ERR("Couldn't get time from server.");
@@ -142,13 +145,14 @@ EAPI time_t etvdb_server_time_get(void)
 		goto end;
 	}
 
-	_xml_count = _xml_depth = _xml_sibling = 0;
-	if (!eina_simple_xml_parse(xml.data, xml.len, EINA_TRUE, _parse_time_cb, (void *)&server_time)) {
+	pdata.xml_count = pdata.xml_depth = pdata.xml_sibling = 0;
+	if (!eina_simple_xml_parse(xml.data, xml.len, EINA_TRUE, _parse_time_cb, &pdata)) {
 		CRIT("Couldn't parse TVDB timestamp XML.");
 		server_time = 0;
 		goto end;
 	}
 
+	server_time = (time_t)pdata.data;
 	DBG("Server Time: %ld", server_time);
 
 end:
@@ -164,58 +168,59 @@ end:
 static Eina_Bool _parse_lang_cb(void *data, Eina_Simple_XML_Type type, const char *content,
 		unsigned offset UNUSED, unsigned length)
 {
+	Parser_Data *pdata = data;
 	char buf[length + 1];
-	char itoa[sizeof(_xml_count) + 1];
+	char itoa[sizeof(pdata->xml_count) + 1];
 	char key[3];
 	enum nname { UNKNOWN, NAME, ABBR };
 
 	switch (type) {
 	case EINA_SIMPLE_XML_OPEN:
-		switch (_xml_depth) {
+		switch (pdata->xml_depth) {
 		case 0:
 			if (!TAGCMP("Languages", content))
-				_xml_depth++;
+				pdata->xml_depth++;
 			break;
 		case 1:
 			if (!TAGCMP("Language", content)) {
-				_xml_depth++;
-				eina_convert_itoa(_xml_count, itoa);
-				eina_hash_add(data, itoa, "");
+				pdata->xml_depth++;
+				eina_convert_itoa(pdata->xml_count, itoa);
+				eina_hash_add(pdata->data, itoa, "");
 			}
 			break;
 		case 2:
 			if (!TAGCMP("name", content))
-				_xml_sibling = NAME;
+				pdata->xml_sibling = NAME;
 			else if (!TAGCMP("abbreviation", content))
-				_xml_sibling = ABBR;
+				pdata->xml_sibling = ABBR;
 			else
-				_xml_sibling = UNKNOWN;
+				pdata->xml_sibling = UNKNOWN;
 			break;
 		}
 		break;
 	case EINA_SIMPLE_XML_CLOSE:
 		if (!TAGCMP("Language", content)) {
-			_xml_count++;
-			_xml_depth--;
+			pdata->xml_count++;
+			pdata->xml_depth--;
 		}
 		break;
 	case EINA_SIMPLE_XML_DATA:
-		if (_xml_depth == 2) {
-			eina_convert_itoa(_xml_count, itoa);
+		if (pdata->xml_depth == 2) {
+			eina_convert_itoa(pdata->xml_count, itoa);
 			MEM2STR(buf, content, length);
 
-			switch (_xml_sibling) {
+			switch (pdata->xml_sibling) {
 			case NAME:
 				DBG("Found Name: %s", buf);
-				MEM2STR(key, (char *)eina_hash_find(data, itoa), 2);
+				MEM2STR(key, (char *)eina_hash_find(pdata->data, itoa), 2);
 
 				/* if the entry of the hash is empty, add data to it;
 				 * else take the data and use it as 2-char hash */
 				if (key[0] == '\0')
-					eina_hash_set(data, itoa, strdup(buf));
+					eina_hash_set(pdata->data, itoa, strdup(buf));
 				else {
-					eina_hash_move(data, itoa, key);
-					free(eina_hash_modify(data, key, strdup(buf)));
+					eina_hash_move(pdata->data, itoa, key);
+					free(eina_hash_modify(pdata->data, key, strdup(buf)));
 				}
 				break;
 			case ABBR:
@@ -224,12 +229,12 @@ static Eina_Bool _parse_lang_cb(void *data, Eina_Simple_XML_Type type, const cha
 				/* if the hash is found an contains an empty string, add key as data;
 				 * if found, but not empty, rename the key
 				 * otherwise the xml is invalid */
-				char *p = (char *)eina_hash_find(data, itoa);
+				char *p = (char *)eina_hash_find(pdata->data, itoa);
 				if (p)
 					if (*p == '\0')
-						eina_hash_set(data, itoa, strdup(buf));
+						eina_hash_set(pdata->data, itoa, strdup(buf));
 					else
-						eina_hash_move(data, itoa, buf);
+						eina_hash_move(pdata->data, itoa, buf);
 				else
 					return EINA_FALSE;
 				break;
@@ -245,19 +250,20 @@ static Eina_Bool _parse_lang_cb(void *data, Eina_Simple_XML_Type type, const cha
 static Eina_Bool _parse_time_cb(void *data, Eina_Simple_XML_Type type, const char *content,
 		unsigned offset UNUSED, unsigned length)
 {
+	Parser_Data *pdata = data;
 	char buf[length + 1];
 
 	switch (type) {
 	case EINA_SIMPLE_XML_OPEN:
-		if (_xml_depth == 0 && !TAGCMP("Items", content))
-			_xml_depth++;
-		else if (_xml_depth == 1 && !TAGCMP("Time", content))
-			_xml_depth++;
+		if (pdata->xml_depth == 0 && !TAGCMP("Items", content))
+			pdata->xml_depth++;
+		else if (pdata->xml_depth == 1 && !TAGCMP("Time", content))
+			pdata->xml_depth++;
 		break;
 	case EINA_SIMPLE_XML_DATA:
-		if (_xml_depth == 2) {
+		if (pdata->xml_depth == 2) {
 			MEM2STR(buf, content, length);
-			*((int*)data) = strtol(buf, NULL, 10);
+			*((int*)pdata->data) = strtol(buf, NULL, 10);
 		}
 		break;
 	default:

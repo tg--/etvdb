@@ -57,8 +57,6 @@
 /* eina logging domain for etvdb */
 int _etvdb_log_dom;
 
-/* auxiliary variables for the xml parsers */
-int _xml_count, _xml_depth, _xml_sibling;
 CURL *curl_handle;
 
 /** Structure representing a download */
@@ -67,11 +65,14 @@ typedef struct _download {
 	char *data; /**< Download Data */
 } Download;
 
-/** Structure to be passed to the episode parser */
+/** Structure to be passed to the parser */
 typedef struct _pdata {
+	int xml_count; /**< XML element count */
+	int xml_depth; /**< XML nesting depth */
+	int xml_sibling; /**< XML siblings */
+	void *data; /**< Pointer passed to parser */
 	Series *s; /**< A series structure */
-	Eina_List *list; /**< An Eina_List */
-} Episode_Parser_Data;
+} Parser_Data;
 
 size_t _dl_to_mem_cb(char *ptr, size_t size, size_t nmemb, void *userdata);
 
