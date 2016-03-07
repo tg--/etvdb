@@ -156,6 +156,33 @@ EAPI Eina_List *etvdb_series_find(const char *name)
 }
 
 /**
+ * @brief Initialize new Series structure
+ *
+ * This function will set up a new Series structure,
+ * and take care of all details, so you don't have to.
+ *
+ * @see etvdb_series_free()
+ *
+ * @returns the pointer to an allocated Series structure on success,
+ * or NULL on failure.
+ */
+EAPI Series *etvdb_series_new()
+{
+	Series *s = NULL;
+
+	s = malloc(sizeof(Series));
+	s->id = 0;
+	s->imdb_id = NULL;
+	s->name = NULL;
+	s->overview = NULL;
+	s->seasons = NULL;
+	s->specials = NULL;
+	s->runtime = 0;
+
+	return s;
+}
+
+/**
  * @brief Populate a Series structure with Episode data
  *
  * This function populates a Series structure with all available and
@@ -303,14 +330,7 @@ static Eina_Bool _parse_series_cb(void *data, Eina_Simple_XML_Type type, const c
 		case 1:
 			if (!TAGCMP("Series", content)) {
 				_xml_depth++;
-				series = malloc(sizeof(Series));
-				series->id = 0;
-				series->imdb_id = NULL;
-				series->name = NULL;
-				series->overview = NULL;
-				series->seasons = NULL;
-				series->specials = NULL;
-				series->runtime = 0;
+				series = etvdb_series_new();
 				*list = eina_list_append(*list, series);
 			}
 			break;
