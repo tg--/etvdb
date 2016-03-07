@@ -195,6 +195,9 @@ EAPI Episode *etvdb_episode_by_date_get(Series *s, const char *date)
  * is unique in that it can initialize a Series structure on it's own, since the
  * TVDB Episode ID does not require to know the Series beforehand.
  *
+ * Please note, that while the series initialization includes associating it to the episode,
+ * the reverse is not true, so the returned episode data cannot be found in the series.
+ *
  * @param id TVDB ID of a episode
  *
  * @param s TVDB Series structure. If necessary it will be initialized. May NOT be NULL!
