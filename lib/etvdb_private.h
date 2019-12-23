@@ -44,7 +44,7 @@
 
 
 #define ETVDB_API_KEY "A34C5A0CAF0F3EFD"
-#define TVDB_API_URI "http://thetvdb.com/api"
+#define TVDB_API_URI "https://thetvdb.com/api"
 
 #ifndef DATA_LANG_FILE_XML
   #define DATA_LANG_FILE_XML "../data/languages.xml"
